@@ -1,185 +1,172 @@
-Here's your **modified README.md** file with placeholders for screenshots, a flow diagram, and your contact details. You can replace the placeholders with actual image URLs.  
 
----
+🏢  Employee Management System  🚀  
 
-```markdown
-# 🏢 Employee Management System 🚀  
+A  full-stack Employee Management System  built using  Node.js, MySQL, and React .  
+This system helps organizations efficiently manage employees, track attendance, handle leave requests, schedule shifts, and perform various  HR operations .  
 
-A full-stack **Employee Management System** built using **Node.js, MySQL, and React**.  
-This system helps organizations efficiently manage employees, track attendance, handle leave requests, schedule shifts, and perform various admin operations.  
-
-## 📸 Screenshots & Flow Diagram  
-
-### 📌 System Flow Diagram  
-![image](https://github.com/user-attachments/assets/f73f5151-d16b-4a34-b766-2e93e62e6898)
  
 
-### 📌 Login Screen  
-![Login Screenshot](your-login-screen-url.png)  
+   🎨  Screenshots & Flow Diagram   
 
-### 📌 Admin Dashboard  
-![Dashboard Screenshot](your-dashboard-screen-url.png)  
+    🔹  System Flow Diagram   
+    ![image](https://github.com/user-attachments/assets/c733ec5a-8c04-4469-95ca-7ca2e1793d45)
 
----
+ 
+    🔹  Login Screen  
+    ![image](https://github.com/user-attachments/assets/c545632a-1745-45fa-ade5-8b675ba6d72d)
 
-## 🚀 Features  
+ 
+    🔹  Admin Dashboard   
+    ![image](https://github.com/user-attachments/assets/9c2dc05f-fc1c-4470-bb4a-4a0bc375d9f2)
 
-### 🔐 Authentication & Role-Based Access  
-- Secure login system with **JWT authentication**  
-- Role-based access control for **employees and admins**  
+ 
+ 
 
-### 📊 Attendance Management  
-- Employees can **check in/out** with timestamps  
-- Admins can **monitor and generate reports**  
+   🚀  Key Features   
 
-### 📅 Leave Management  
-- Employees can **request leaves**  
-- Admins can **approve/reject leave requests**  
-- Leave balance tracking  
+    🔐  Authentication & Role-Based Access   
+✔ Secure login system with  JWT authentication   
+✔ Role-based access control for  employees and admins   
 
-### ⏳ Shift Management  
-- Assign, update, and manage **employee work shifts**  
-- Flexible scheduling  
+    📊  Attendance Management   
+✔ Employees can  check in/out  with timestamps  
+✔ Admins can  monitor and generate reports   
 
-### 🎯 Admin Dashboard  
-- Full control over **employee records, approvals, and reports**  
-- Manage attendance, leaves, shifts, and user roles  
+    📅  Leave Management   
+✔ Employees can  request leaves   
+✔ Admins can  approve/reject leave requests   
+✔ Leave balance tracking  
 
----
+    ⏳  Shift Management   
+✔ Assign, update, and manage  employee work shifts   
+✔ Flexible scheduling  
 
-## 🛠️ Tech Stack  
+    🎯  Admin Dashboard   
+✔ Full control over  employee records, approvals, and reports   
+✔ Manage attendance, leaves, shifts, and user roles  
 
-- **Frontend:** React.js, React Router, Axios  
-- **Backend:** Node.js, Express.js  
-- **Database:** MySQL  
-- **Authentication:** JWT (JSON Web Tokens)  
-- **State Management:** React Context API  
-- **API Requests:** Axios  
+ 
 
----
+   🛠️  Tech Stack   
 
-## 📂 Project Structure  
+🔹  Frontend:  React.js, React Router, Axios  
+🔹  Backend:  Node.js, Express.js  
+🔹  Database:  MySQL  
+🔹  Authentication:  JWT (JSON Web Tokens)  
+🔹  State Management:  React Context API  
+🔹  API Requests:  Axios  
 
-```
+ 
+
+   📂  Project Structure   
 /employee-management
-│── backend/                # Node.js Backend
-│   ├── config/             # Database & Auth Configs
-│   ├── controllers/        # Business Logic (Auth, Employees, Leaves, Shifts)
-│   ├── models/             # Database Models (MySQL)
-│   ├── routes/             # API Routes
-│   ├── middleware/         # JWT Authentication & Role-based access
-│   ├── server.js           # Main Server File
+│── backend/                  Node.js Backend
+│   ├── config/               Database & Auth Configs
+│   ├── controllers/          Business Logic (Auth, Employees, Leaves, Shifts)
+│   ├── models/               Database Models (MySQL)
+│   ├── routes/               API Routes
+│   ├── middleware/           JWT Authentication & Role-based access
+│   ├── server.js             Main Server File
 │
-│── frontend/               # React Frontend
+│── frontend/                 React Frontend
 │   ├── src/
-│   │   ├── components/     # Reusable UI Components
-│   │   ├── pages/          # App Pages (Dashboard, Attendance, Leave, etc.)
-│   │   ├── context/        # React Context API for State Management
-│   │   ├── services/       # API Calls with Axios
-│   │   ├── App.js          # Main App Component
-│   │   ├── index.js        # React DOM Rendering
+│   │   ├── components/       Reusable UI Components
+│   │   ├── pages/            App Pages (Dashboard, Attendance, Leave, etc.)
+│   │   ├── context/          React Context API for State Management
+│   │   ├── services/         API Calls with Axios
+│   │   ├── App.js            Main App Component
+│   │   ├── index.js          React DOM Rendering
 │
-│── README.md               # Project Documentation
-│── package.json            # Dependencies & Scripts
-│── .env                    # Environment Variables
-```
+│── README.md                 Project Documentation
+│── package.json              Dependencies & Scripts
+│── .env                      Environment Variables
+ 
 
----
+ 
 
-## ⚡ Installation & Setup  
+   ⚡  Installation & Setup   
 
-### 1️⃣ Clone the Repository  
-```bash
+    🛠️  1️⃣ Clone the Repository   
+ bash
 git clone https://github.com/Sivaroyal007/HRMS.git
 cd employee-management
-```
+ 
 
-### 2️⃣ Backend Setup (Node.js + MySQL)  
-```bash
+    🛠️  2️⃣ Backend Setup (Node.js + MySQL)   
+ bash
 cd backend
 npm install
-```
+ 
 - Create a `.env` file in the `backend` directory and add:  
-  ```env
+   ini
   DB_HOST=your_mysql_host
   DB_USER=your_mysql_user
   DB_PASSWORD=your_mysql_password
   DB_NAME=employee_management
   JWT_SECRET=your_secret_key
-  ```
+   
 - Run migrations to set up the database:
-  ```bash
+   bash
   node setupDatabase.js
-  ```
+   
 - Start the backend server:
-  ```bash
+   bash
   npm start
-  ```
+   
 
-### 3️⃣ Frontend Setup (React.js)  
-```bash
+    🛠️  3️⃣ Frontend Setup (React.js)   
+ bash
 cd frontend
 npm install
 npm start
-```
+ 
 
----
+ 
 
-## 🎥 Demo  
+   🎥  Demo   
 [![Watch Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://youtu.be/YOUR_VIDEO_ID)  
-📌 Click the image to watch the demo video  
+📌 *Click the image to watch the demo video*  
 
----
+ 
 
-## 📌 API Endpoints (Backend)  
+   📌  API Endpoints (Backend)   
 
-| Method | Endpoint            | Description                     |
-|--------|---------------------|---------------------------------|
-| POST   | `/api/auth/login`   | User login                     |
-| POST   | `/api/auth/register`| Register new employee/admin    |
-| GET    | `/api/employees`    | Get all employees (Admin only) |
-| POST   | `/api/attendance`   | Mark attendance                |
-| GET    | `/api/attendance`   | Get attendance records         |
-| POST   | `/api/leaves`       | Request leave                  |
-| GET    | `/api/leaves`       | Get leave requests (Admin)     |
-| POST   | `/api/shifts`       | Assign shifts (Admin)          |
-| GET    | `/api/shifts`       | Get shift schedules            |
+|  Method  |  Endpoint          |  Description                  |
+|   --|       |           |
+| `POST`    | `/api/auth/login`   | User login                     |
+| `POST`    | `/api/auth/register`| Register new employee/admin    |
+| `GET`     | `/api/employees`    | Get all employees (Admin only) |
+| `POST`    | `/api/attendance`   | Mark attendance                |
+| `GET`     | `/api/attendance`   | Get attendance records         |
+| `POST`    | `/api/leaves`       | Request leave                  |
+| `GET`     | `/api/leaves`       | Get leave requests (Admin)     |
+| `POST`    | `/api/shifts`       | Assign shifts (Admin)          |
+| `GET`     | `/api/shifts`       | Get shift schedules            |
 
----
+ 
 
-## 🎯 Future Enhancements  
-✅ Payroll integration  
-✅ Notifications & email alerts  
-✅ Mobile app version  
+   🎯  Future Enhancements   
+✔ Payroll integration  
+✔ Notifications & email alerts  
+✔ Mobile app version  
 
----
+ 
 
-## 📬 Contribution  
+   🤝  Contribution   
 
-🚀 Want to improve this project? Fork the repo, create a new branch, and submit a pull request!  
+🚀 Want to improve this project?  Fork the repo, create a new branch, and submit a pull request!   
 
----
+ 
 
-## 📞 Contact  
-💼 **Name:** Siva Sai Royal  
-📧 **Email:** [sivaroyal423@gmail.com](mailto:sivaroyal423@gmail.com)  
-📞 **Phone:** 9182967349  
-🔗 **LinkedIn:** [Siva Sai Royal](https://www.linkedin.com/in/sivasai-royal/)  
+   📞  Contact   
 
----
+💼  Name:   Siva Sai Royal   
+📧  Email:  [sivaroyal423@gmail.com](mailto:sivaroyal423@gmail.com)  
+📞  Phone:  `+91 82967349`  
+🔗  LinkedIn:  [Siva Sai Royal](https://www.linkedin.com/in/sivasai-royal/)  
 
-💡 **If you find this project useful, don’t forget to ⭐ the repository!**  
+ 
 
-#NodeJS #ReactJS #MySQL #EmployeeManagement #HRTech #SoftwareDevelopment #WebApp  
-```
+💡  If you find this project useful, don’t forget to ⭐ the repository!   
 
----
-
-### **What’s Updated?**
-✅ **Added placeholders for screenshots & flow diagram**  
-✅ **Inserted your name, phone, email, and LinkedIn profile**  
-✅ **Improved formatting & structured content better**  
-
-🔹 **Next Step:** Upload your flow diagram & screenshots to an image hosting service (like GitHub, Imgur, or Cloudinary) and replace the `your-image-url.png` placeholders.  
-
-Let me know if you need more tweaks! 🚀
+ ️⃣   NodeJS  ReactJS  MySQL  EmployeeManagement  HRTech  SoftwareDevelopment  WebApp   

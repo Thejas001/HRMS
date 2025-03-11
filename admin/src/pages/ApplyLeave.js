@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { applyLeave, cancelLeave, getAllLeaves } from "../services/leaveService";
+import { applyLeave, cancelLeave, getAllLeaves, getLeaveHistory } from "../services/leaveService";
 import {
   Box,
   Button,
@@ -42,7 +42,7 @@ const ApplyLeave = () => {
   const fetchLeaveHistory = async () => {
     console.log("Fetching leave history...");
     try {
-      const response = await getAllLeaves();
+      const response = await getLeaveHistory();
       console.log("Leave history fetched:", response.data);
       setLeaveHistory(response.data);
     } catch (error) {

@@ -11,25 +11,54 @@ import ApplyLeave from "./pages/ApplyLeave";
 import AdminLeaveApproval from "./pages/AdminLeaveApproval";
 
 // Protected Route Component
-const ProtectedRoute = ({ element }) => {
+const ProtectedRoute = ({ element, allowedRoles }) => {
   const token = localStorage.getItem("token");
-  return token ? element : <Navigate to="/login" />;
+  const userRole = localStorage.getItem("role"); // Get role from storage
+
+  if (!token) return <Navigate to="/login" />; // If no token, redirect to login
+  if (!allowedRoles.includes(userRole)) return <Navigate to="/dashboard" />; // Redirect if role isn't allowed
+
+  return element;
 };
 
 const App = () => {
   return (
+    // <Router>
+    //   <Routes>
+    //     <Route path="/login" element={<Login />} />
+    //     <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
+    //     <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+    //     <Route path="/employees" element={<ProtectedRoute element={<Employee/>} />} /> {/* Employee Route */}
+    //     <Route path="*" element={<Navigate to="/login" />} />
+    //     <Route path="/update/:id" element={<ProtectedRoute element={<EditProfile />} />} />
+    //     <Route path="/adminattendance" element={<ProtectedRoute element={<AdminAttendance/>} />} />
+    //     <Route path="/attendance" element={<ProtectedRoute element={<Attendance/>} />} />
+    //     <Route path="/leave" element={<ProtectedRoute element={<ApplyLeave/>} />} />
+    //     <Route path="/approveleave" element={<ProtectedRoute element={<AdminLeaveApproval/>} />} />
+    //   </Routes>
+    // </Router>
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
-        <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
-        <Route path="/employees" element={<ProtectedRoute element={<Employee/>} />} /> {/* Employee Route */}
+
+        {/* Common for all users */}
+        <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} allowedRoles={["Admin", "HR", "Employee"]} />} />
+        <Route path="/profile" element={<ProtectedRoute element={<Profile />} allowedRoles={["Admin", "HR", "Employee"]} />} />
+
+        {/* Employee Routes */}
+        <Route path="/employees" element={<ProtectedRoute element={<Employee />} allowedRoles={["HR", "Admin"]} />} />
+        <Route path="/attendance" element={<ProtectedRoute element={<Attendance />} allowedRoles={["Employee", "HR"]} />} />
+        <Route path="/leave" element={<ProtectedRoute element={<ApplyLeave />} allowedRoles={["Employee"]} />} />
+
+        {/* HR/Admin Routes */}
+        <Route path="/adminattendance" element={<ProtectedRoute element={<AdminAttendance />} allowedRoles={["HR", "Admin"]} />} />
+        <Route path="/approveleave" element={<ProtectedRoute element={<AdminLeaveApproval />} allowedRoles={["HR"]} />} />
+
+        {/* Edit Profile (Only for Admin & HR) */}
+        <Route path="/update/:id" element={<ProtectedRoute element={<EditProfile />} allowedRoles={["HR", "Admin","Employee"]} />} />
+
+        {/* Redirect unknown routes */}
         <Route path="*" element={<Navigate to="/login" />} />
-        <Route path="/update/:id" element={<ProtectedRoute element={<EditProfile />} />} />
-        <Route path="/adminattendance" element={<ProtectedRoute element={<AdminAttendance/>} />} />
-        <Route path="/attendance" element={<ProtectedRoute element={<Attendance/>} />} />
-        <Route path="/leave" element={<ProtectedRoute element={<ApplyLeave/>} />} />
-        <Route path="/approveleave" element={<ProtectedRoute element={<AdminLeaveApproval/>} />} />
       </Routes>
     </Router>
   );

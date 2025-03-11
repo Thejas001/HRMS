@@ -182,7 +182,7 @@ import { useNavigate } from "react-router-dom";
 const Employees = () => {
   const [employees, setEmployees] = useState([]);
   const [open, setOpen] = useState(false);
-  const [newEmployee, setNewEmployee] = useState({ name: "", email: "", password: "", role: "User" });
+  const [newEmployee, setNewEmployee] = useState({ name: "", email: "", password: "", role: "" });
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5); // Default pagination settings
 
@@ -215,6 +215,7 @@ const Employees = () => {
 
   const handleCreateEmployee = async () => {
     try {
+      console.log(newEmployee)
       await registerEmployee(newEmployee);
       setOpen(false);
       fetchEmployees();
@@ -318,7 +319,8 @@ const Employees = () => {
               fullWidth value={newEmployee.role} sx={{ mb: 2 }}
               onChange={(e) => setNewEmployee({ ...newEmployee, role: e.target.value })}
             >
-              <MenuItem value="User">User</MenuItem>
+              <MenuItem value="Employee">Employee</MenuItem>
+              <MenuItem value="Hr">Hr</MenuItem>
               <MenuItem value="Admin">Admin</MenuItem>
             </Select>
 

@@ -1,11 +1,28 @@
-Here's a **README.md** file for your Employee Management System built with **Node.js, MySQL, and React**:  
+Here's your **modified README.md** file with placeholders for screenshots, a flow diagram, and your contact details. You can replace the placeholders with actual image URLs.  
+
+---
 
 ```markdown
-# Employee Management System 🚀
+# 🏢 Employee Management System 🚀  
 
-A full-stack **Employee Management System** built using **Node.js, MySQL, and React**. This system helps organizations efficiently manage employees, track attendance, handle leave requests, schedule shifts, and perform various admin operations.  
+A full-stack **Employee Management System** built using **Node.js, MySQL, and React**.  
+This system helps organizations efficiently manage employees, track attendance, handle leave requests, schedule shifts, and perform various admin operations.  
 
-## 🚀 Features
+## 📸 Screenshots & Flow Diagram  
+
+### 📌 System Flow Diagram  
+![image](https://github.com/user-attachments/assets/f73f5151-d16b-4a34-b766-2e93e62e6898)
+ 
+
+### 📌 Login Screen  
+![Login Screenshot](your-login-screen-url.png)  
+
+### 📌 Admin Dashboard  
+![Dashboard Screenshot](your-dashboard-screen-url.png)  
+
+---
+
+## 🚀 Features  
 
 ### 🔐 Authentication & Role-Based Access  
 - Secure login system with **JWT authentication**  
@@ -30,7 +47,7 @@ A full-stack **Employee Management System** built using **Node.js, MySQL, and Re
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ Tech Stack  
 
 - **Frontend:** React.js, React Router, Axios  
 - **Backend:** Node.js, Express.js  
@@ -41,7 +58,7 @@ A full-stack **Employee Management System** built using **Node.js, MySQL, and Re
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Structure  
 
 ```
 /employee-management
@@ -69,15 +86,15 @@ A full-stack **Employee Management System** built using **Node.js, MySQL, and Re
 
 ---
 
-## ⚡ Installation & Setup
+## ⚡ Installation & Setup  
 
 ### 1️⃣ Clone the Repository  
 ```bash
-git clone https://github.com/your-repo/employee-management.git
+git clone https://github.com/Sivaroyal007/HRMS.git
 cd employee-management
 ```
 
-### 2️⃣ Backend Setup (Node.js + MySQL)
+### 2️⃣ Backend Setup (Node.js + MySQL)  
 ```bash
 cd backend
 npm install
@@ -99,7 +116,7 @@ npm install
   npm start
   ```
 
-### 3️⃣ Frontend Setup (React.js)
+### 3️⃣ Frontend Setup (React.js)  
 ```bash
 cd frontend
 npm install
@@ -114,7 +131,7 @@ npm start
 
 ---
 
-## 📌 API Endpoints (Backend)
+## 📌 API Endpoints (Backend)  
 
 | Method | Endpoint            | Description                     |
 |--------|---------------------|---------------------------------|
@@ -144,12 +161,25 @@ npm start
 ---
 
 ## 📞 Contact  
-💼 Connect on LinkedIn: [Your Name](https://www.linkedin.com/in/yourprofile)  
-📧 Email: your.email@example.com  
+💼 **Name:** Siva Sai Royal  
+📧 **Email:** [sivaroyal423@gmail.com](mailto:sivaroyal423@gmail.com)  
+📞 **Phone:** 9182967349  
+🔗 **LinkedIn:** [Siva Sai Royal](https://www.linkedin.com/in/sivasai-royal/)  
 
 ---
 
 💡 **If you find this project useful, don’t forget to ⭐ the repository!**  
 
 #NodeJS #ReactJS #MySQL #EmployeeManagement #HRTech #SoftwareDevelopment #WebApp  
+```
 
+---
+
+### **What’s Updated?**
+✅ **Added placeholders for screenshots & flow diagram**  
+✅ **Inserted your name, phone, email, and LinkedIn profile**  
+✅ **Improved formatting & structured content better**  
+
+🔹 **Next Step:** Upload your flow diagram & screenshots to an image hosting service (like GitHub, Imgur, or Cloudinary) and replace the `your-image-url.png` placeholders.  
+
+Let me know if you need more tweaks! 🚀

@@ -1,0 +1,109 @@
+/* Full-screen gradient background with animation */
+.register-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea, #764ba2, #667eea);
+  background-size: 600% 600%;
+  animation: gradientBG 15s ease infinite;
+  padding: 20px;
+}
+
+/* Glassmorphic card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Title styling */
+.register-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* Form styling */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.register-form input {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+}
+
+.register-form input::placeholder {
+  color: #999;
+}
+
+.register-form button {
+  padding: 12px;
+  background: linear-gradient(135deg, #6b73ff, #000dff);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.register-form button:hover {
+  background: linear-gradient(135deg, #5a63e0, #000bcc);
+}
+
+.redirect-login {
+  margin-top: 15px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.redirect-login span {
+  color: #b3c7ff;
+  text-decoration: underline;
+}
+
+.redirect-login:hover span {
+  color: white;
+}
+
+/* Slide-up animation on load */
+.animate-slide-up {
+  animation: slideUp 0.8s ease;
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
+/* Background gradient animation */
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}

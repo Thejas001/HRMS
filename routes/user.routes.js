@@ -13,7 +13,7 @@
 
 const express = require('express');
 const {
-    register,
+    registerUser,
     login,
     getProfile,
     getAllUsers,
@@ -22,15 +22,17 @@ const {
     deleteUser
 } = require('../controllers/user.controller');
 const authMiddleware = require('../middleware/authMiddleware');
+const { employeeDocsUpload } = require('../middleware/uploadMiddleware');
 
 const router = express.Router();
 
-router.post('/register', register);
+//router.post('/register', employeeDocsUpload, register);
 router.post('/login', login);
 router.get('/profile', authMiddleware, getProfile);
 router.get('/all', authMiddleware, getAllUsers);
 router.get('/:id', authMiddleware, getUserById);
 router.put('/:id', authMiddleware, updateUser);
 router.delete('/:id', authMiddleware, deleteUser);
+router.post('/register', registerUser);
 
 module.exports = router;

@@ -3,49 +3,12 @@ const jwt = require("jsonwebtoken");
 const { User, Employee } = require("../models");
 require("dotenv").config();
 
-// Register a new user (with optional employee record)
-// exports.register = async (req, res) => {
-//     try {
-//         const { name, email, password, role, position, department, salary, joiningDate } = req.body;
-
-//         // Check if the email is already used
-//         const existingUser = await User.findOne({ where: { email } });
-//         if (existingUser) return res.status(400).json({ message: 'Email already in use' });
-
-//         // Hash password
-//         const hashedPassword = await bcrypt.hash(password, 10);
-
-//         // Create the user
-//         const newUser = await User.create({ name, email, password: hashedPassword, role });
-
-//         // If the user is an employee, create an entry in Employee table
-//         console.log("Creating employee record for:", newUser.id, position, department, salary, joiningDate);
-
-//         if (roleLower === 'employee') {
-//             employeeRecord = await Employee.create({
-//                 userId: newUser.id,
-//                 position,
-//                 department,
-//                 salary,
-//                 joiningDate
-//             });
-//         }
-
-//         res.status(201).json({
-//             message: 'User registered successfully',
-//             user: newUser,
-//             employee: employeeRecord
-//         });
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error registering user', error });
-//     }
-// };
-
-exports.register = async (req, res) => {
+// Register a new user (with employee details and document upload)
+exports.registerUser = async (req, res) => {
   try {
-    const { email, password, name, role } = req.body;
+    const { name, email, password, phone } = req.body;
 
-    if (!email || !password || !name) {
+    if (!name || !email || !password || !phone) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -56,51 +19,71 @@ exports.register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
     const newUser = await User.create({
       name,
       email,
       password: hashedPassword,
-      role: role || "Employee", // Default role is Employee
+      phone,
+      role: "User", // Customer role
     });
 
-    // Automatically add this user to the Employee table with empty details
-    await Employee.create({
-      userId: newUser.id,
-      position: null,
-      department: null,
-      salary: null,
-      joiningDate: null,
-      Name:newUser.name,
-      reportingManagerId:null,
-    });
+    const token = jwt.sign(
+      { id: newUser.id, role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+  );
 
-    res
-      .status(201)
-      .json({ message: "User registered successfully", user: newUser });
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
+    });
   } catch (error) {
-    console.error("Registration Error:", error);
-    res
-      .status(500)
-      .json({ message: "Error registering user", error: error.message });
+    console.error("User Registration Error:", error);
+    res.status(500).json({
+      message: "Error registering user",
+      error: error.message,
+    });
   }
 };
 
+
+// Login user
 // Login user
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ where: { email } });
 
-    if (!user)
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
+    if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    // Fetch application status if role is Employee
+    let applicationStatus = null;
+    if (user.role === "Employee") {
+      const employee = await Employee.findOne({ where: { userId: user.id } });
+      if (employee) {
+        applicationStatus = employee.applicationStatus;
+      }
+    }
 
     const token = jwt.sign(
-      { id: user.id, role: user.role },
+      {
+        id: user.id,
+        role: user.role,
+        email: user.email,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -113,12 +96,15 @@ exports.login = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        applicationStatus, // null if not an employee
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Error logging in", error });
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Error logging in", error: error.message });
   }
 };
+
 
 // Get user profile
 exports.getProfile = async (req, res) => {

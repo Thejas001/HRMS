@@ -41,7 +41,28 @@ const Employee = sequelize.define("Employee", {
     // Shift Management
     shiftName: { type: DataTypes.STRING, allowNull: true }, // Morning, Evening, Night
     shiftStartTime: { type: DataTypes.TIME, allowNull: true }, // e.g., 09:00 AM
-    shiftEndTime: { type: DataTypes.TIME, allowNull: true }  // e.g., 06:00 PM
+    shiftEndTime: { type: DataTypes.TIME, allowNull: true },  // e.g., 06:00 PM
+
+    firstName: { type: DataTypes.STRING, allowNull: false },
+    middleName: { type: DataTypes.STRING, allowNull: true },
+    lastName: { type: DataTypes.STRING, allowNull: false },
+    age: { type: DataTypes.INTEGER, allowNull: false },
+    address: { type: DataTypes.STRING, allowNull: false },
+    state: { type: DataTypes.STRING, allowNull: false },
+    pinCode: { type: DataTypes.STRING, allowNull: false },
+    mobileNumber: { type: DataTypes.STRING, allowNull: false },
+    certificate: { type: DataTypes.STRING, allowNull: true }, // file path or URL
+    aadharCard: { type: DataTypes.STRING, allowNull: true }, // file path or URL
+    panCard: { type: DataTypes.STRING, allowNull: true }, // file path or URL
+    applicationStatus: {
+        type: DataTypes.ENUM('pending', 'accepted', 'rejected'),
+        allowNull: false,
+        defaultValue: 'pending'
+    },
+    profilePic: { type: DataTypes.STRING, allowNull: true },
+    nationality: { type: DataTypes.STRING, allowNull: false },
+    workExperience: { type: DataTypes.STRING, allowNull: false },
+    idCard: { type: DataTypes.STRING, allowNull: true },
 }, { timestamps: true });
 
 module.exports = Employee;

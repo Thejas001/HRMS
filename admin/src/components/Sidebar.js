@@ -168,6 +168,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import FactCheckIcon from "@mui/icons-material/FactCheck";
 import MenuIcon from "@mui/icons-material/Menu";
+import WorkOutlineIcon from "@mui/icons-material/WorkOutline";
+
 
 const Sidebar = () => {
   const location = useLocation();
@@ -195,6 +197,7 @@ const Sidebar = () => {
     { text: "Approve Attendance", icon: <CheckCircleIcon />, path: "/adminattendance", roles: ["HR", "Admin"] },
     { text: "Apply Leave", icon: <CalendarTodayIcon />, path: "/leave", roles: ["Employee"] },
     { text: "Leave Approvals", icon: <CheckCircleIcon />, path: "/approveleave", roles: ["HR"] },
+    { text: "Worker Applications", icon: <WorkOutlineIcon />, path: "/worker-applications", roles: ["Admin", "HR"] },
   ];
 
   const filteredMenu = menuItems.filter((item) => item.roles.includes(role));

@@ -20,9 +20,9 @@ const User = sequelize.define("User", {
     email: { type: DataTypes.STRING, allowNull: false },
     password: { type: DataTypes.STRING, allowNull: false },
     role: { 
-        type: DataTypes.ENUM("Admin", "HR", "Employee"), 
+        type: DataTypes.ENUM("Admin", "HR", "Employee", "User"), 
         allowNull: false, 
-        defaultValue: "Employee" 
+        defaultValue: "User" 
     }
 }, { timestamps: true });
 

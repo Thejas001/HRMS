@@ -9,6 +9,9 @@ import Attendance from "./pages/Attendance";
 import AdminAttendance from "./pages/AdminAttendance";
 import ApplyLeave from "./pages/ApplyLeave";
 import AdminLeaveApproval from "./pages/AdminLeaveApproval";
+import Register from "./pages/Register";
+import WorkerApplication from './pages/WorkerApplication';
+
 
 // Protected Route Component
 const ProtectedRoute = ({ element, allowedRoles }) => {
@@ -40,6 +43,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
         {/* Common for all users */}
         <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} allowedRoles={["Admin", "HR", "Employee"]} />} />
@@ -56,6 +60,8 @@ const App = () => {
 
         {/* Edit Profile (Only for Admin & HR) */}
         <Route path="/update/:id" element={<ProtectedRoute element={<EditProfile />} allowedRoles={["HR", "Admin","Employee"]} />} />
+
+        <Route path="/worker-applications" element={<WorkerApplication />} />
 
         {/* Redirect unknown routes */}
         <Route path="*" element={<Navigate to="/login" />} />

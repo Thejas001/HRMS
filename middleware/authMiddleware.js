@@ -4,26 +4,32 @@ dotenv.config();
 
 module.exports = (req, res, next) => {
     try {
-        const token = req.header('Authorization');
+        const authHeader = req.headers.authorization;
 
-        // 🔹 Debugging: Log the token
-        console.log("Received Token:", token);
+        // ✅ Debug: See exactly what is received
+        console.log("Received Authorization Header:", authHeader);
 
-        if (!token) {
-            return res.status(401).json({ message: "No token, authorization denied" });
+        if (!authHeader) {
+            return res.status(401).json({ message: "No token provided in Authorization header" });
         }
 
-        // 🔹 Remove "Bearer " if present
-        const cleanToken = token.replace("Bearer ", "").trim();
+        // ✅ Ensure it starts with "Bearer "
+        if (!authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({ message: "Invalid token format. Expected 'Bearer <token>'" });
+        }
 
-        // 🔹 Verify token
-        const decoded = jwt.verify(cleanToken, process.env.JWT_SECRET);
+        // ✅ Extract the token safely
+        const token = authHeader.split(" ")[1].trim();
 
-        // 🔹 Attach user to request
+        // ✅ Verify token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // ✅ Attach decoded user info to request for downstream controllers
         req.user = decoded;
+
         next();
     } catch (error) {
         console.error("Token verification error:", error.message);
-        return res.status(401).json({ message: "Invalid token", error: error.message });
+        return res.status(401).json({ message: "Invalid or expired token", error: error.message });
     }
 };

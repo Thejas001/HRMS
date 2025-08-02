@@ -19,85 +19,16 @@ interface Worker {
   createdAt: string;
 }
 
-// Fallback dummy data for testing
-const dummyWorkers: Worker[] = [
-  {
-    id: 1,
-    firstName: 'John',
-    lastName: 'Doe',
-    age: 28,
-    address: '123 Main Street',
-    state: 'Chennai',
-    mobileNumber: '9876543210',
-    nationality: 'Indian',
-    workExperience: 'Electrician with 5 years experience',
-    applicationStatus: 'accepted',
-    createdAt: '2024-01-15'
-  },
-  {
-    id: 2,
-    firstName: 'Alice',
-    lastName: 'Smith',
-    age: 32,
-    address: '456 Oak Avenue',
-    state: 'Chengalpattu',
-    mobileNumber: '9876543211',
-    nationality: 'Indian',
-    workExperience: 'Plumber with 8 years experience',
-    applicationStatus: 'accepted',
-    createdAt: '2024-01-10'
-  },
-  {
-    id: 3,
-    firstName: 'Bob',
-    lastName: 'Johnson',
-    age: 25,
-    address: '789 Pine Road',
-    state: 'Tambaram',
-    mobileNumber: '9876543212',
-    nationality: 'Indian',
-    workExperience: 'Carpenter with 3 years experience',
-    applicationStatus: 'accepted',
-    createdAt: '2024-01-20'
-  },
-  {
-    id: 4,
-    firstName: 'Sarah',
-    lastName: 'Wilson',
-    age: 29,
-    address: '321 Elm Street',
-    state: 'Chennai',
-    mobileNumber: '9876543213',
-    nationality: 'Indian',
-    workExperience: 'Electrician with 6 years experience',
-    applicationStatus: 'accepted',
-    createdAt: '2024-01-12'
-  },
-  {
-    id: 5,
-    firstName: 'Mike',
-    lastName: 'Brown',
-    age: 35,
-    address: '654 Maple Drive',
-    state: 'Chengalpattu',
-    mobileNumber: '9876543214',
-    nationality: 'Indian',
-    workExperience: 'Plumber with 10 years experience',
-    applicationStatus: 'accepted',
-    createdAt: '2024-01-08'
-  }
-];
+
 
 const LandingPage = () => {
   const navigate = useNavigate();
   const [workers, setWorkers] = useState<Worker[]>([]);
   const [filteredWorkers, setFilteredWorkers] = useState<Worker[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
-  const [useDummyData, setUseDummyData] = useState(false);
 
   useEffect(() => {
     fetchWorkers();
@@ -106,7 +37,6 @@ const LandingPage = () => {
   const fetchWorkers = async () => {
     try {
       setLoading(true);
-      setError('');
       
       const response = await axios.get('http://localhost:5000/api/employee/public', {
         timeout: 5000 // 5 second timeout
@@ -130,25 +60,14 @@ const LandingPage = () => {
         }));
         setWorkers(workersData);
         setFilteredWorkers(workersData);
-        setUseDummyData(false);
       } else {
         throw new Error('Invalid data format received');
       }
     } catch (err: any) {
       console.error('Error fetching workers:', err);
-      
-      // If API fails, use dummy data for demonstration
-      if (err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
-        setError('API server is not running. Using demo data instead.');
-        setWorkers(dummyWorkers);
-        setFilteredWorkers(dummyWorkers);
-        setUseDummyData(true);
-      } else {
-        setError('Failed to load workers. Using demo data instead.');
-        setWorkers(dummyWorkers);
-        setFilteredWorkers(dummyWorkers);
-        setUseDummyData(true);
-      }
+      // Show error state instead of dummy data
+      setWorkers([]);
+      setFilteredWorkers([]);
     } finally {
       setLoading(false);
     }
@@ -246,6 +165,17 @@ const LandingPage = () => {
     });
   };
 
+  const handleLogout = () => {
+    // Clear user data from localStorage/sessionStorage
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userToken');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('userToken');
+    
+    // Navigate to login page
+    navigate('/');
+  };
+
   if (loading) {
     return (
       <div className="neo-loading-container">
@@ -257,6 +187,35 @@ const LandingPage = () => {
 
   return (
     <div className="neo-container">
+      {/* Header with Profile and Logout Buttons */}
+      <div className="neo-header">
+        <div className="neo-header-content">
+          <h1 className="neo-logo">WorkHub</h1>
+          <div className="neo-header-buttons">
+            <button 
+              onClick={() => navigate('/profile')}
+              className="neo-profile-btn"
+              title="View My Profile"
+            >
+              <svg className="neo-profile-icon" viewBox="0 0 24 24">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+              </svg>
+              My Profile
+            </button>
+            <button 
+              onClick={handleLogout}
+              className="neo-logout-btn"
+              title="Logout"
+            >
+              <svg className="neo-logout-icon" viewBox="0 0 24 24">
+                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z" />
+              </svg>
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <section className="neo-hero">
         <div className="neo-hero-content">
@@ -269,27 +228,63 @@ const LandingPage = () => {
             Connect with verified professionals across various domains. 
             Quality work, reliable service, exceptional results.
           </p>
-        </div>
-        <div className="neo-hero-stats">
-          <div className="neo-stat">
-            <span className="neo-stat-number">{workers.length}</span>
-            <span className="neo-stat-label">Available Workers</span>
-          </div>
-          <div className="neo-stat">
-            <span className="neo-stat-number">
-              {workers.filter(w => w.workExperience.toLowerCase().includes('electrician') || w.workExperience.toLowerCase().includes('electrical')).length}
-            </span>
-            <span className="neo-stat-label">Electricians</span>
-          </div>
-          <div className="neo-stat">
-            <span className="neo-stat-number">
-              {workers.filter(w => w.workExperience.toLowerCase().includes('plumber') || w.workExperience.toLowerCase().includes('plumbing')).length}
-            </span>
-            <span className="neo-stat-label">Plumbers</span>
-          </div>
-        </div>
-      </section>
 
+          <div className="neo-services-simple-header">
+          <h2 className="neo-services-simple-title">Our Services</h2>
+        </div>
+        <div className="neo-services-simple-grid">
+          <div className="neo-service-simple-card">
+            <div className="neo-service-simple-icon electrician">
+              <svg viewBox="0 0 24 24">
+                <path d="M7 2v11h3v9l7-12h-4l4-8z" fill="#ff6b35"/>
+              </svg>
+            </div>
+            <span className="neo-service-simple-name">Electrician</span>
+          </div>
+          <div className="neo-service-simple-card">
+            <div className="neo-service-simple-icon plumber">
+              <svg viewBox="0 0 24 24">
+                <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z" fill="#8b5cf6"/>
+              </svg>
+            </div>
+            <span className="neo-service-simple-name">Plumber</span>
+          </div>
+          <div className="neo-service-simple-card">
+            <div className="neo-service-simple-icon painter">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="#ec4899"/>
+              </svg>
+            </div>
+            <span className="neo-service-simple-name">Painter</span>
+          </div>
+          <div className="neo-service-simple-card">
+            <div className="neo-service-simple-icon carpenter">
+              <svg viewBox="0 0 24 24">
+                <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z" fill="#a0522d"/>
+              </svg>
+            </div>
+            <span className="neo-service-simple-name">Carpenter</span>
+          </div>
+          <div className="neo-service-simple-card">
+            <div className="neo-service-simple-icon gardener">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 22c4.97 0 9-4.03 9-9-4.97 0-9 4.03-9 9zM5.6 10.25c0 1.38 1.12 2.5 2.5 2.5.53 0 1.01-.16 1.42-.44l-.02.19c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5l-.02-.19c.4.28.89.44 1.42.44 1.38 0 2.5-1.12 2.5-2.5 0-1-.59-1.85-1.43-2.25.84-.4 1.43-1.25 1.43-2.25 0-1.38-1.12-2.5-2.5-2.5-.53 0-1.01.16-1.42.44l.02-.19C14.5 2.12 13.38 1 12 1S9.5 2.12 9.5 3.5l.02.19c-.4-.28-.89-.44-1.42-.44-1.38 0-2.5 1.12-2.5 2.5 0 1 .59 1.85 1.43 2.25-.84.4-1.43 1.25-1.43 2.25zM12 5.5c1.38 0 2.5 1.12 2.5 2.5s-1.12 2.5-2.5 2.5S9.5 9.38 9.5 8s1.12-2.5 2.5-2.5z" fill="#22c55e"/>
+              </svg>
+            </div>
+            <span className="neo-service-simple-name">Gardener</span>
+          </div>
+          <div className="neo-service-simple-card">
+            <div className="neo-service-simple-icon cleaner">
+              <svg viewBox="0 0 24 24">
+                <path d="M19.36 2.72l1.42 1.42-5.46 5.46 1.42 1.42 5.46-5.46 1.42 1.42L18.36 2.72c-.55-.55-1.45-.55-2 0zM12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7z" fill="#ff6b35"/>
+              </svg>
+            </div>
+            <span className="neo-service-simple-name">Cleaner</span>
+          </div>
+        </div>
+        </div>
+
+      </section>
       {/* Search and Filter Section */}
       <section className="neo-filters">
         <div className="neo-search-container">
@@ -340,21 +335,6 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-
-      {/* Error/Demo Data Banner */}
-      {error && (
-        <div className="neo-error-banner">
-          <svg className="neo-error-icon" viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-          </svg>
-          {error}
-          {useDummyData && (
-            <button onClick={fetchWorkers} className="neo-retry-btn">
-              Retry API
-            </button>
-          )}
-        </div>
-      )}
 
       {/* Search Results Info */}
       {searchTerm && (
@@ -440,12 +420,6 @@ const LandingPage = () => {
                     <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
                   </svg>
                   Book Worker
-                </button>
-                <button className="neo-btn neo-btn-secondary">
-                  <svg className="neo-btn-icon" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                  </svg>
-                  View Profile
                 </button>
               </div>
             </div>

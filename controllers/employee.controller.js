@@ -1,6 +1,5 @@
 const { User} = require('../models');
 const Employee = require('../models/employee.model');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sequelize = require('../config/db');
 
@@ -15,18 +14,18 @@ exports.addEmployee = async (req, res) => {
       email, password
     } = req.body;
     console.log("Received body:", req.body);
-
+    console.log("Uploaded files:", req.files);
 
     // ✅ Create User first
     const newUser = await User.create({
       name: `${firstName} ${middleName || ''} ${lastName}`,
       email,
-      password, // plain text for now (NOT recommended in production)
+      password,
       phone: mobileNumber,
       role: 'Employee'
     }, { transaction: t });
 
-    // ✅ Create Employee WITH userId directly
+    // ✅ Create Employee WITH userId directly and file paths
     const employee = await Employee.create({
       userId: newUser.id,
       firstName,
@@ -39,7 +38,11 @@ exports.addEmployee = async (req, res) => {
       mobileNumber,
       nationality,
       workExperience,
-      applicationStatus: 'pending'
+      applicationStatus: 'pending',
+      // Store file paths if files were uploaded
+      certificate: req.files?.certificate ? req.files.certificate[0].path : null,
+      aadharCard: req.files?.aadharCard ? req.files.aadharCard[0].path : null,
+      panCard: req.files?.panCard ? req.files.panCard[0].path : null
     }, { transaction: t });
 
     // ✅ Commit transaction
@@ -72,6 +75,14 @@ exports.addEmployee = async (req, res) => {
   } catch (error) {
     await t.rollback();
     console.error(error);
+    
+    // Handle specific database errors
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      if (error.fields && error.fields.email) {
+        return res.status(409).json({ message: 'Email already exists. Please use a different email address.' });
+      }
+    }
+    
     res.status(500).json({ message: 'Error during registration', error: error.message });
   }
 };
@@ -90,8 +101,7 @@ exports.loginEmployee = async (req, res) => {
       }
   
       // Check password
-    //  const isMatch = await bcrypt.compare(password, user.password);
-if (password !== user.password) {
+      if (password !== user.password) {
         return res.status(400).json({ message: 'Invalid credentials' });
       }
   

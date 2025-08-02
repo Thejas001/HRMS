@@ -29,7 +29,7 @@ const UserLogin = () => {
       });
 
       if (response.status === 200) {
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userToken', response.data.token);
         toast.success('Login successful! Redirecting...', { autoClose: 1500 });
         setTimeout(() => {
           navigate('/dashboard');
@@ -56,6 +56,7 @@ const UserLogin = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Enter your email"
+              autoComplete="off"
             />
           </div>
           <div className="form-group">
@@ -66,6 +67,7 @@ const UserLogin = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Enter your password"
+              autoComplete="off"
             />
           </div>
           <button type="submit" disabled={loading}>

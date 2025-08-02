@@ -18,10 +18,23 @@ const JobPostDisplay = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all"); // all, active, inactive
+  const [isApproved, setIsApproved] = useState(false);
 
   useEffect(() => {
-    fetchJobPosts();
+    checkApprovalStatus();
   }, []);
+
+  const checkApprovalStatus = () => {
+    const worker = JSON.parse(localStorage.getItem("worker") || "{}");
+    const approved = worker.applicationStatus === "accepted";
+    setIsApproved(approved);
+    
+    if (approved) {
+      fetchJobPosts();
+    } else {
+      setLoading(false);
+    }
+  };
 
   const fetchJobPosts = async () => {
     setLoading(true);
@@ -126,12 +139,54 @@ const JobPostDisplay = () => {
     }
   };
 
+  // If not approved, show approval required message
+  if (!isApproved) {
+    return (
+      <div className="job-posts-dashboard">
+        <div className="top-nav">
+          <div className="nav-left">
+            <h1>My Job Posts</h1>
+          </div>
+        </div>
+        
+        <div className="main-content">
+          <div className="empty-container">
+            <div className="empty-illustration">
+              <div className="empty-icon">⏳</div>
+              <div className="empty-lines">
+                <div className="line"></div>
+                <div className="line short"></div>
+                <div className="line"></div>
+              </div>
+            </div>
+            <h2>Approval Required</h2>
+            <p>
+              Your application is still under review. Once approved, you'll be able to create and manage job posts.
+            </p>
+            <div className="approval-status">
+              <p>Current Status: <strong>Pending Approval</strong></p>
+              <p>Please wait for admin approval to access job posting features.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
-      <div className="job-posts-container">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading your job posts...</p>
+      <div className="job-posts-dashboard">
+        <div className="top-nav">
+          <div className="nav-left">
+            <h1>My Job Posts</h1>
+          </div>
+        </div>
+        
+        <div className="main-content">
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading your job posts...</p>
+          </div>
         </div>
       </div>
     );
@@ -188,16 +243,6 @@ const JobPostDisplay = () => {
             Paused
           </button>
         </div>
-        <div className="search-container">
-          <div className="search-wrapper">
-            <span className="search-icon">🔍</span>
-            <input 
-              type="text" 
-              placeholder="Search your job posts..." 
-              className="search-input"
-            />
-          </div>
-        </div>
       </div>
 
       {/* Error Message */}
@@ -232,6 +277,9 @@ const JobPostDisplay = () => {
                 : `No ${filter} job posts found.`
               }
             </p>
+            <div className="create-post-cta">
+              <p>Start by creating your first job post to attract workers!</p>
+            </div>
           </div>
         ) : (
           <div className="posts-container">

@@ -1,0 +1,166 @@
+.worker-calendar {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.calendar-nav-btn {
+  background: #7B68EE;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s;
+}
+
+.calendar-nav-btn:hover {
+  background: #6A5ACD;
+}
+
+.calendar-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.calendar-grid {
+  margin-bottom: 20px;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  margin-bottom: 10px;
+}
+
+.weekday {
+  text-align: center;
+  padding: 10px;
+  font-weight: bold;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.calendar-dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+}
+
+.calendar-date {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e9ecef;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+  position: relative;
+}
+
+.calendar-date:hover {
+  background: #f8f9fa;
+  transform: scale(1.05);
+}
+
+.calendar-date.booked {
+  background: #ffc107;
+  color: #333;
+  font-weight: bold;
+}
+
+.calendar-date.booked-pending {
+  background: #17a2b8;
+  color: white;
+  font-weight: bold;
+}
+
+.calendar-date.booked-accepted {
+  background: #28a745;
+  color: white;
+  font-weight: bold;
+}
+
+.calendar-loading {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.calendar-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+}
+
+.legend-color.available {
+  background: white;
+}
+
+.legend-color.pending {
+  background: #17a2b8;
+}
+
+.legend-color.accepted {
+  background: #28a745;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .worker-calendar {
+    padding: 15px;
+    margin: 15px 0;
+  }
+  
+  .calendar-title {
+    font-size: 1.2rem;
+  }
+  
+  .calendar-date {
+    font-size: 0.9rem;
+  }
+  
+  .calendar-legend {
+    gap: 15px;
+  }
+  
+  .legend-item {
+    font-size: 0.8rem;
+  }
+} 

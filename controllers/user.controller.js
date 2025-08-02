@@ -1,6 +1,6 @@
-const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { User, Employee } = require("../models");
+const Booking = require("../models/booking.model");
 require("dotenv").config();
 
 // Register a new user (with employee details and document upload)
@@ -17,12 +17,10 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const newUser = await User.create({
       name,
       email,
-      password: hashedPassword,
+      password,
       phone,
       role: "User", // Customer role
     });
@@ -64,8 +62,7 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    if (password !== user.password) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
@@ -115,9 +112,45 @@ exports.getProfile = async (req, res) => {
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.json(user);
+    // Fetch user's bookings
+    const bookings = await Booking.findAll({
+      where: { customerEmail: user.email },
+      include: [{
+        model: Employee,
+        as: 'employee',
+        attributes: ['firstName', 'lastName']
+      }],
+      order: [['createdAt', 'DESC']]
+    });
+
+    // Format bookings for frontend
+    const formattedBookings = bookings.map(booking => ({
+      id: booking.id,
+      workerName: booking.employee ? `${booking.employee.firstName} ${booking.employee.lastName}` : 'Unknown Worker',
+      serviceType: booking.workDescription || 'General Work',
+      bookingDate: booking.preferredDate,
+      status: booking.status,
+      amount: booking.estimatedHours * 500 // Assuming ₹500 per hour
+    }));
+
+    // Format the response to match frontend expectations
+    const profileData = {
+      id: user.id,
+      firstName: user.name.split(' ')[0] || user.name,
+      lastName: user.name.split(' ').slice(1).join(' ') || '',
+      email: user.email,
+      phoneNumber: user.phone || '',
+      address: '',
+      city: '',
+      state: '',
+      createdAt: user.createdAt,
+      bookings: formattedBookings
+    };
+
+    res.json(profileData);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching profile", error });
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ message: "Error fetching profile", error: error.message });
   }
 };
 
@@ -151,6 +184,42 @@ exports.getUserById = async (req, res) => {
     res.json(user);
   } catch (error) {
     res.status(500).json({ message: "Error fetching user", error });
+  }
+};
+
+// Update user profile (User can update their own profile)
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const { firstName, lastName, phoneNumber, address, city, state } = req.body;
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Update user with new name (combine firstName and lastName)
+    const fullName = `${firstName} ${lastName}`.trim();
+    
+    await user.update({ 
+      name: fullName,
+      phone: phoneNumber
+    });
+
+    // Format the response to match frontend expectations
+    const profileData = {
+      id: user.id,
+      firstName: firstName,
+      lastName: lastName,
+      email: user.email,
+      phoneNumber: phoneNumber,
+      address: address,
+      city: city,
+      state: state,
+      createdAt: user.createdAt,
+      bookings: []
+    };
+
+    res.json({ message: "Profile updated successfully", profile: profileData });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating profile", error });
   }
 };
 

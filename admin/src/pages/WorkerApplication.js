@@ -20,7 +20,20 @@ import {
   DialogContentText,
   Chip,
   Grid,
+  Card,
+  CardContent,
+  CardActions,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import {
+  Download,
+  Visibility,
+  Description,
+  CreditCard,
+  Person,
+  Work,
+} from "@mui/icons-material";
 import axios from "axios";
 import Sidebar from "../components/Sidebar";
 import TopBar from "../components/AppBar";
@@ -48,6 +61,7 @@ const WorkerApplication = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       setApplications(response.data);
     } catch (error) {
       console.error("Error fetching applications:", error);
@@ -120,6 +134,38 @@ const WorkerApplication = () => {
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
+  const handleFileView = (filePath, fileName) => {
+    if (!filePath) {
+      alert(`${fileName} is not uploaded`);
+      return;
+    }
+    
+    // Open file in new tab
+    const fileUrl = `http://localhost:5000/${filePath}`;
+    window.open(fileUrl, '_blank');
+  };
+
+  const handleFileDownload = (filePath, fileName) => {
+    if (!filePath) {
+      alert(`${fileName} is not uploaded`);
+      return;
+    }
+    
+    // Create download link
+    const fileUrl = `http://localhost:5000/${filePath}`;
+    const link = document.createElement('a');
+    link.href = fileUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const getFileName = (filePath) => {
+    if (!filePath) return null;
+    return filePath.split('/').pop();
+  };
+
   return (
     <Box sx={{ display: "flex", bgcolor: "#F5F5F5", minHeight: "100vh" }}>
       <Sidebar />
@@ -144,6 +190,7 @@ const WorkerApplication = () => {
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>Email</TableCell>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>Phone</TableCell>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>State</TableCell>
+                  <TableCell sx={{ color: "white", fontWeight: "bold" }}>Documents</TableCell>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>Status</TableCell>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>Actions</TableCell>
                 </TableRow>
@@ -162,6 +209,28 @@ const WorkerApplication = () => {
                       <TableCell>{app.email}</TableCell>
                       <TableCell>{app.phone || "N/A"}</TableCell>
                       <TableCell>{app.state}</TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                          <Chip 
+                            size="small" 
+                            label={`Cert: ${app.certificate ? '✓' : '✗'}`}
+                            color={app.certificate ? 'success' : 'error'}
+                            variant="outlined"
+                          />
+                          <Chip 
+                            size="small" 
+                            label={`Aadhar: ${app.aadharCard ? '✓' : '✗'}`}
+                            color={app.aadharCard ? 'success' : 'error'}
+                            variant="outlined"
+                          />
+                          <Chip 
+                            size="small" 
+                            label={`PAN: ${app.panCard ? '✓' : '✗'}`}
+                            color={app.panCard ? 'success' : 'error'}
+                            variant="outlined"
+                          />
+                        </Box>
+                      </TableCell>
                       <TableCell>
                         <Chip
                           label={getStatusText(app.applicationStatus)}
@@ -210,7 +279,7 @@ const WorkerApplication = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={8} align="center">
+                    <TableCell colSpan={9} align="center">
                       <Typography variant="body1" color="textSecondary">
                         No worker applications found.
                       </Typography>
@@ -325,20 +394,169 @@ const WorkerApplication = () => {
                   </Grid>
                   <Grid item xs={12}>
                     <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2 }}>
-                      Documents
+                      Uploaded Documents
                     </Typography>
-                    <Typography variant="body1" sx={{ mb: 1 }}>
-                      <strong>Certificate:</strong> {selectedDetailApplication.certificate ? "Uploaded" : "Not uploaded"}
-                    </Typography>
-                    <Typography variant="body1" sx={{ mb: 1 }}>
-                      <strong>Aadhar Card:</strong> {selectedDetailApplication.aadharCard ? "Uploaded" : "Not uploaded"}
-                    </Typography>
-                    <Typography variant="body1" sx={{ mb: 1 }}>
-                      <strong>PAN Card:</strong> {selectedDetailApplication.panCard ? "Uploaded" : "Not uploaded"}
-                    </Typography>
-                    <Typography variant="body1" sx={{ mb: 1 }}>
-                      <strong>Profile Picture:</strong> {selectedDetailApplication.profilePic ? "Uploaded" : "Not uploaded"}
-                    </Typography>
+                    <Grid container spacing={2}>
+                      {/* Work Experience Certificate */}
+                      <Grid item xs={12} md={6}>
+                        <Card sx={{ border: selectedDetailApplication.certificate ? '2px solid #4caf50' : '2px solid #f44336' }}>
+                          <CardContent>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                              <Work sx={{ mr: 1, color: selectedDetailApplication.certificate ? '#4caf50' : '#f44336' }} />
+                              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                Work Experience Certificate
+                              </Typography>
+                            </Box>
+                            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                              {selectedDetailApplication.certificate ? 
+                                `File: ${getFileName(selectedDetailApplication.certificate)}` : 
+                                'No certificate uploaded'
+                              }
+                            </Typography>
+                            <CardActions>
+                              <Tooltip title="View Certificate">
+                                <IconButton 
+                                  onClick={() => handleFileView(selectedDetailApplication.certificate, 'Work Experience Certificate')}
+                                  color="primary"
+                                  disabled={!selectedDetailApplication.certificate}
+                                >
+                                  <Visibility />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Download Certificate">
+                                <IconButton 
+                                  onClick={() => handleFileDownload(selectedDetailApplication.certificate, 'Work_Experience_Certificate.pdf')}
+                                  color="primary"
+                                  disabled={!selectedDetailApplication.certificate}
+                                >
+                                  <Download />
+                                </IconButton>
+                              </Tooltip>
+                            </CardActions>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+
+                      {/* Aadhar Card */}
+                      <Grid item xs={12} md={6}>
+                        <Card sx={{ border: selectedDetailApplication.aadharCard ? '2px solid #4caf50' : '2px solid #f44336' }}>
+                          <CardContent>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                              <CreditCard sx={{ mr: 1, color: selectedDetailApplication.aadharCard ? '#4caf50' : '#f44336' }} />
+                              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                Aadhar Card
+                              </Typography>
+                            </Box>
+                            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                              {selectedDetailApplication.aadharCard ? 
+                                `File: ${getFileName(selectedDetailApplication.aadharCard)}` : 
+                                'No Aadhar card uploaded'
+                              }
+                            </Typography>
+                            <CardActions>
+                              <Tooltip title="View Aadhar Card">
+                                <IconButton 
+                                  onClick={() => handleFileView(selectedDetailApplication.aadharCard, 'Aadhar Card')}
+                                  color="primary"
+                                  disabled={!selectedDetailApplication.aadharCard}
+                                >
+                                  <Visibility />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Download Aadhar Card">
+                                <IconButton 
+                                  onClick={() => handleFileDownload(selectedDetailApplication.aadharCard, 'Aadhar_Card.pdf')}
+                                  color="primary"
+                                  disabled={!selectedDetailApplication.aadharCard}
+                                >
+                                  <Download />
+                                </IconButton>
+                              </Tooltip>
+                            </CardActions>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+
+                      {/* PAN Card */}
+                      <Grid item xs={12} md={6}>
+                        <Card sx={{ border: selectedDetailApplication.panCard ? '2px solid #4caf50' : '2px solid #f44336' }}>
+                          <CardContent>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                              <CreditCard sx={{ mr: 1, color: selectedDetailApplication.panCard ? '#4caf50' : '#f44336' }} />
+                              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                PAN Card
+                              </Typography>
+                            </Box>
+                            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                              {selectedDetailApplication.panCard ? 
+                                `File: ${getFileName(selectedDetailApplication.panCard)}` : 
+                                'No PAN card uploaded'
+                              }
+                            </Typography>
+                            <CardActions>
+                              <Tooltip title="View PAN Card">
+                                <IconButton 
+                                  onClick={() => handleFileView(selectedDetailApplication.panCard, 'PAN Card')}
+                                  color="primary"
+                                  disabled={!selectedDetailApplication.panCard}
+                                >
+                                  <Visibility />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Download PAN Card">
+                                <IconButton 
+                                  onClick={() => handleFileDownload(selectedDetailApplication.panCard, 'PAN_Card.pdf')}
+                                  color="primary"
+                                  disabled={!selectedDetailApplication.panCard}
+                                >
+                                  <Download />
+                                </IconButton>
+                              </Tooltip>
+                            </CardActions>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+
+                      {/* Profile Picture */}
+                      <Grid item xs={12} md={6}>
+                        <Card sx={{ border: selectedDetailApplication.profilePic ? '2px solid #4caf50' : '2px solid #f44336' }}>
+                          <CardContent>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                              <Person sx={{ mr: 1, color: selectedDetailApplication.profilePic ? '#4caf50' : '#f44336' }} />
+                              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                Profile Picture
+                              </Typography>
+                            </Box>
+                            <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                              {selectedDetailApplication.profilePic ? 
+                                `File: ${getFileName(selectedDetailApplication.profilePic)}` : 
+                                'No profile picture uploaded'
+                              }
+                            </Typography>
+                            <CardActions>
+                              <Tooltip title="View Profile Picture">
+                                <IconButton 
+                                  onClick={() => handleFileView(selectedDetailApplication.profilePic, 'Profile Picture')}
+                                  color="primary"
+                                  disabled={!selectedDetailApplication.profilePic}
+                                >
+                                  <Visibility />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Download Profile Picture">
+                                <IconButton 
+                                  onClick={() => handleFileDownload(selectedDetailApplication.profilePic, 'Profile_Picture.jpg')}
+                                  color="primary"
+                                  disabled={!selectedDetailApplication.profilePic}
+                                >
+                                  <Download />
+                                </IconButton>
+                              </Tooltip>
+                            </CardActions>
+                          </CardContent>
+                        </Card>
+                      </Grid>
+                    </Grid>
                   </Grid>
                 </Grid>
               </Box>

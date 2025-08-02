@@ -66,5 +66,5 @@ const sendEmail = async (to, subject, text) => {
   }
 };
 
-// Usage example
-sendEmail("receiver@example.com", "Test Email", "This is a test email using Gmail SMTP!");
+// Usage example - commented out to avoid sending test emails
+// sendEmail("receiver@example.com", "Test Email", "This is a test email using Gmail SMTP!");

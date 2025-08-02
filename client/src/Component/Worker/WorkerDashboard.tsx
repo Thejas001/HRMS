@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './WorkerDashboard.css';
+import WorkerCalendar from './WorkerCalendar';
 
 interface WorkRequest {
   _id: string;
@@ -26,18 +27,22 @@ interface WorkRequest {
 }
 
 interface Worker {
-  _id: string;
+  _id?: string;
+  id?: string;
+  userId?: string;
   firstName: string;
   lastName: string;
   email: string;
   mobileNumber: string;
   workExperience: string;
   state: string;
+  applicationStatus?: string;
 }
 
 const WorkerDashboard = () => {
   const navigate = useNavigate();
   const [worker, setWorker] = useState<Worker | null>(null);
+  const [employeeId, setEmployeeId] = useState<string>('');
   const [workRequests, setWorkRequests] = useState<WorkRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState<string | null>(null);
@@ -47,37 +52,179 @@ const WorkerDashboard = () => {
   useEffect(() => {
     fetchWorkerData();
     fetchWorkRequests();
-  }, []);
+    
+    // Set up periodic status check every 30 seconds
+    const statusCheckInterval = setInterval(() => {
+      if (worker?.applicationStatus === 'pending') {
+        checkApplicationStatus();
+      }
+    }, 30000); // Check every 30 seconds
+    
+    return () => clearInterval(statusCheckInterval);
+  }, [worker?.applicationStatus]);
 
-    const fetchWorkerData = async () => {
-      try {
-      const token = localStorage.getItem('token');
+  // Show success message if application is approved (first time loading)
+  useEffect(() => {
+    if (worker?.applicationStatus === 'accepted') {
+      toast.success('🎉 Welcome! Your application has been approved. You have access to all features.');
+    }
+  }, [worker?.applicationStatus]);
+
+  // Auto-check status when component mounts if status is pending
+  useEffect(() => {
+    if (worker?.applicationStatus === 'pending') {
+      // Check status immediately when component loads
+      setTimeout(() => {
+        checkApplicationStatus();
+      }, 2000); // Check after 2 seconds
+    }
+  }, [worker?.applicationStatus]);
+
+      const fetchWorkerData = async () => {
+    try {
+      const token = localStorage.getItem('workerToken');
       if (!token) {
         navigate('/worker/login');
-          return;
+        return;
+      }
+
+      // Get worker data from localStorage first
+      const storedWorker = localStorage.getItem('worker');
+      if (storedWorker) {
+        const workerData = JSON.parse(storedWorker);
+        console.log('Stored worker data:', workerData);
+        setWorker(workerData);
+      }
+
+      // Also fetch from API to get latest data
+      try {
+        const response = await axios.get('http://localhost:5000/api/employee/status', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        console.log('API status response:', response.data);
+
+        // Update worker data with latest application status
+        if (storedWorker) {
+          const workerData = JSON.parse(storedWorker);
+          const previousStatus = workerData.applicationStatus;
+          const newStatus = response.data.applicationStatus;
+          
+          console.log('Status comparison:', { previousStatus, newStatus });
+          
+          const updatedWorker = {
+            ...workerData,
+            applicationStatus: newStatus
+          };
+          setWorker(updatedWorker);
+          // Update localStorage with latest status
+          localStorage.setItem('worker', JSON.stringify(updatedWorker));
+          
+
+          
+          // Show notification if status changed
+          if (previousStatus !== newStatus) {
+            if (newStatus === 'accepted') {
+              toast.success('🎉 Congratulations! Your application has been approved! You now have access to all features.');
+              // Refresh work requests after approval
+              setTimeout(() => {
+                fetchWorkRequests();
+              }, 2000);
+            } else if (newStatus === 'rejected') {
+              toast.error('Your application has been rejected. Please contact admin for more information.');
+            }
+          }
         }
-
-      const response = await axios.get('http://localhost:5000/api/employee/profile', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      setWorker(response.data);
+      } catch (error) {
+        console.error('Error fetching employee status:', error);
+        // Don't show error toast for status fetch, just use stored data
+      }
     } catch (error) {
       console.error('Error fetching worker data:', error);
       toast.error('Failed to load worker data');
     }
   };
 
+  const checkApplicationStatus = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('workerToken');
+      if (!token) {
+        navigate('/worker/login');
+        return;
+      }
+
+      const response = await axios.get('http://localhost:5000/api/employee/status', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      const storedWorker = localStorage.getItem('worker');
+      if (storedWorker) {
+        const workerData = JSON.parse(storedWorker);
+        const previousStatus = workerData.applicationStatus;
+        const newStatus = response.data.applicationStatus;
+        
+        const updatedWorker = {
+          ...workerData,
+          applicationStatus: newStatus
+        };
+        setWorker(updatedWorker);
+        localStorage.setItem('worker', JSON.stringify(updatedWorker));
+        
+        // Show notification if status changed
+        if (previousStatus !== newStatus) {
+          if (newStatus === 'accepted') {
+            toast.success('🎉 Congratulations! Your application has been approved! You now have access to all features.');
+            // Refresh work requests after approval
+            setTimeout(() => {
+              fetchWorkRequests();
+            }, 2000);
+          } else if (newStatus === 'rejected') {
+            toast.error('Your application has been rejected. Please contact admin for more information.');
+          }
+        } else {
+          toast.info('Application status is still the same. No changes detected.');
+        }
+      }
+    } catch (error) {
+      console.error('Error checking application status:', error);
+      toast.error('Failed to check application status. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const fetchWorkRequests = async () => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('workerToken');
       if (!token) return;
 
-      const response = await axios.get(`http://localhost:5000/api/bookings/worker/${worker?._id}`, {
+      // Only fetch work requests if application is approved
+      if (worker?.applicationStatus !== 'accepted') {
+        setLoading(false);
+        return;
+      }
+
+      // Use the correct worker ID - try different possible fields
+      const workerId = worker?._id || worker?.id || worker?.userId;
+      if (!workerId) {
+        console.error('No worker ID found');
+        return;
+      }
+      
+      const response = await axios.get(`http://localhost:5000/api/bookings/worker/my-bookings`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       setWorkRequests(response.data.data || []);
+      
+      // Get employee ID from the first booking if available
+      if (response.data.data && response.data.data.length > 0) {
+        const firstBooking = response.data.data[0];
+        if (firstBooking.employeeId) {
+          setEmployeeId(firstBooking.employeeId.toString());
+        }
+      }
     } catch (error) {
       console.error('Error fetching work requests:', error);
       toast.error('Failed to load work requests');
@@ -89,7 +236,7 @@ const WorkerDashboard = () => {
   const handleStatusUpdate = async (bookingId: string, status: string) => {
     try {
       setUpdating(bookingId);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('workerToken');
       
       const response = await axios.put(
         `http://localhost:5000/api/bookings/${bookingId}/status`,
@@ -106,6 +253,18 @@ const WorkerDashboard = () => {
         toast.success(`Work request ${status} successfully`);
         fetchWorkRequests(); // Refresh the list
         setResponseText(prev => ({ ...prev, [bookingId]: '' }));
+        
+        // Show notification if accepted
+        if (status === 'accepted' && response.data.data?.customerNotification) {
+          toast.info(`Customer has been notified of acceptance!`);
+        }
+        
+        // Force calendar refresh if on calendar tab
+        if (activeTab === 'calendar') {
+          // Trigger calendar refresh by changing the key
+          setActiveTab('requests');
+          setTimeout(() => setActiveTab('calendar'), 100);
+        }
       }
     } catch (error) {
       console.error('Error updating status:', error);
@@ -155,7 +314,8 @@ const WorkerDashboard = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('workerToken');
+    localStorage.removeItem('worker');
     navigate('/worker/login');
   };
 
@@ -170,6 +330,113 @@ const WorkerDashboard = () => {
         <div className="dashboard-loading">
           <div className="loading-spinner"></div>
           <p>Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show pending application status if not approved
+  if (worker?.applicationStatus === 'pending') {
+    return (
+      <div className="worker-dashboard">
+        <ToastContainer />
+        
+        {/* Header */}
+        <div className="dashboard-header">
+          <div className="header-content">
+            <div className="welcome-section">
+              <h1>Welcome back, {worker?.firstName}!</h1>
+              <p className="subtitle">Your application is under review</p>
+            </div>
+            <div className="header-actions">
+              <button onClick={handleLogout} className="secondary-button">
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Application Status Card */}
+        <div className="application-status-container">
+          <div className="status-card pending">
+            <div className="status-icon">⏳</div>
+            <h2>Application Status: Pending</h2>
+            <p>Your application is currently under review by our admin team.</p>
+            <p>You will be able to access all dashboard features once your application is approved.</p>
+            <div className="status-details">
+              <p><strong>What happens next?</strong></p>
+              <ul>
+                <li>Admin will review your application and documents</li>
+                <li>You'll receive notification once approved</li>
+                <li>You'll then have access to work requests and job postings</li>
+              </ul>
+            </div>
+            <div className="refresh-section">
+              <button 
+                onClick={checkApplicationStatus} 
+                className="refresh-button"
+                disabled={loading}
+              >
+                {loading ? 'Checking...' : 'Check Application Status'}
+              </button>
+              <p className="refresh-hint">Click to check if your application has been approved</p>
+              <p className="refresh-hint" style={{ color: '#ff6b35', fontWeight: 'bold' }}>
+                💡 Tip: Your status will also be checked automatically every 30 seconds
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show rejected application status
+  if (worker?.applicationStatus === 'rejected') {
+    return (
+      <div className="worker-dashboard">
+        <ToastContainer />
+        
+        {/* Header */}
+        <div className="dashboard-header">
+          <div className="header-content">
+            <div className="welcome-section">
+              <h1>Welcome back, {worker?.firstName}!</h1>
+              <p className="subtitle">Application Status</p>
+            </div>
+            <div className="header-actions">
+              <button onClick={handleLogout} className="secondary-button">
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Application Status Card */}
+        <div className="application-status-container">
+          <div className="status-card rejected">
+            <div className="status-icon">❌</div>
+            <h2>Application Status: Rejected</h2>
+            <p>Unfortunately, your application has been rejected.</p>
+            <p>Please contact the admin team for more information.</p>
+            <div className="status-details">
+              <p><strong>Next steps:</strong></p>
+              <ul>
+                <li>Contact admin for clarification</li>
+                <li>You may reapply with updated information</li>
+                <li>Ensure all documents are properly uploaded</li>
+              </ul>
+            </div>
+            <div className="refresh-section">
+              <button 
+                onClick={checkApplicationStatus} 
+                className="refresh-button"
+                disabled={loading}
+              >
+                {loading ? 'Checking...' : 'Check Application Status'}
+              </button>
+              <p className="refresh-hint">Click to check if your application status has changed</p>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -242,6 +509,12 @@ const WorkerDashboard = () => {
           onClick={() => setActiveTab('rejected')}
         >
           Rejected ({rejectedRequests.length})
+        </button>
+        <button 
+          className={`tab-button ${activeTab === 'calendar' ? 'active' : ''}`}
+          onClick={() => setActiveTab('calendar')}
+        >
+          📅 Calendar
         </button>
       </div>
 
@@ -478,6 +751,17 @@ const WorkerDashboard = () => {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'calendar' && (
+          <div className="requests-section">
+            <h2>My Schedule</h2>
+            <p className="calendar-description">
+              View your booked dates and availability. Green dates are accepted bookings, 
+              blue dates are pending requests.
+            </p>
+            <WorkerCalendar workerId={employeeId} />
           </div>
         )}
       </div>

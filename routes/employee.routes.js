@@ -26,6 +26,7 @@ router.put('/me', authMiddleware, authRole(['Employee']), updateOwnProfile);
 router.put('/profile-pic', authMiddleware, authRole(['Employee']), upload.single('profilePic'), updateProfilePic);
 
 
+// Employee Self-Registration
 router.post(
     '/register',
     upload.fields([
@@ -33,13 +34,6 @@ router.post(
       { name: 'aadharCard', maxCount: 1 },
       { name: 'panCard', maxCount: 1 }
     ]),
-    addEmployee // (we will write this function for self-registration)
-  );
-
-  // Employee Self-Registration
-router.post(
-    '/register',
-    employeeDocsUpload,
     addEmployee
   );
   

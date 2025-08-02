@@ -16,6 +16,7 @@ const {
     registerUser,
     login,
     getProfile,
+    updateUserProfile,
     getAllUsers,
     getUserById,
     updateUser,
@@ -29,6 +30,7 @@ const router = express.Router();
 //router.post('/register', employeeDocsUpload, register);
 router.post('/login', login);
 router.get('/profile', authMiddleware, getProfile);
+router.put('/profile', authMiddleware, updateUserProfile);
 router.get('/all', authMiddleware, getAllUsers);
 router.get('/:id', authMiddleware, getUserById);
 router.put('/:id', authMiddleware, updateUser);

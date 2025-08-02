@@ -1,5 +1,4 @@
 const { User } = require('../models');
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 exports.loginAdmin = async (req, res) => {
@@ -11,7 +10,8 @@ exports.loginAdmin = async (req, res) => {
       return res.status(404).json({ message: 'Invalid email or password' });
     }
 
- if (password !== user.password) {
+    // Use plain text comparison for password verification
+    if (password !== user.password) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 

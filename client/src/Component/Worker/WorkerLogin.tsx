@@ -32,10 +32,18 @@ const WorkerLogin = () => {
       // ✅ Store worker data separately
       localStorage.setItem('worker', JSON.stringify(user));
 
-      toast.success('Login successful! Redirecting...', { autoClose: 1500 });
-      setTimeout(() => {
-        navigate('/worker-dashboard');
-      }, 1500);
+      // Check if application is approved and show appropriate message
+      if (user.applicationStatus === 'accepted') {
+        toast.success('🎉 Welcome back! Your application is approved. Redirecting to dashboard...', { autoClose: 2000 });
+        setTimeout(() => {
+          navigate('/worker/dashboard');
+        }, 2000);
+      } else {
+        toast.success('Login successful! Redirecting...', { autoClose: 1500 });
+        setTimeout(() => {
+          navigate('/worker/dashboard');
+        }, 1500);
+      }
     }
   } catch (error) {
     toast.error('Invalid credentials or server error');
@@ -54,9 +62,10 @@ const WorkerLogin = () => {
           <input
             type="email"
             value={email}
-            placeholder="worker@example.com"
+            placeholder="Enter your email"
             onChange={(e) => setEmail(e.target.value)}
             required
+            autoComplete="off"
           />
           <label>Password</label>
           <input
@@ -65,6 +74,7 @@ const WorkerLogin = () => {
             placeholder="Your password"
             onChange={(e) => setPassword(e.target.value)}
             required
+            autoComplete="off"
           />
           <button type="submit" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}

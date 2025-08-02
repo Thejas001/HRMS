@@ -15,6 +15,15 @@ const WorkerLayout = () => {
     setWorkerData(JSON.parse(storedWorker));
   }, [navigate]);
 
+  const handleLogout = () => {
+    // Clear all worker-related data from localStorage
+    localStorage.removeItem("worker");
+    localStorage.removeItem("workerToken");
+    
+    // Redirect to login page
+    navigate("/worker/login");
+  };
+
   const sidebarItems =
     workerData?.applicationStatus === "accepted"
       ? [
@@ -36,6 +45,23 @@ const WorkerLayout = () => {
             </li>
           ))}
         </ul>
+        
+        {/* Logout Section */}
+        <div className="logout-section">
+          <div className="worker-info">
+            <div className="worker-avatar">
+              {workerData?.name ? workerData.name.charAt(0).toUpperCase() : 'W'}
+            </div>
+            <div className="worker-details">
+              <p className="worker-name">{workerData?.name || "Worker"}</p>
+              <p className="worker-email">{workerData?.email || ""}</p>
+            </div>
+          </div>
+          <button className="logout-btn" onClick={handleLogout}>
+            <span className="logout-icon">🚪</span>
+            Logout
+          </button>
+        </div>
       </aside>
       <main className="dashboard-content fade-in">
         <Outlet />

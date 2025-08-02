@@ -54,6 +54,7 @@ const UserRegister = () => {
             onChange={handleChange}
             placeholder="Full Name"
             required
+            autoComplete="off"
           />
           <input
             type="email"
@@ -62,6 +63,7 @@ const UserRegister = () => {
             onChange={handleChange}
             placeholder="Email Address"
             required
+            autoComplete="off"
           />
           <input
             type="text"
@@ -70,6 +72,7 @@ const UserRegister = () => {
             onChange={handleChange}
             placeholder="Phone Number"
             required
+            autoComplete="off"
           />
           <input
             type="password"
@@ -78,6 +81,7 @@ const UserRegister = () => {
             onChange={handleChange}
             placeholder="Password"
             required
+            autoComplete="off"
           />
           <button type="submit" disabled={loading}>
             {loading ? 'Registering...' : 'Register'}

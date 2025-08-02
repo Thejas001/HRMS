@@ -138,7 +138,14 @@ const updateBookingStatus = async (req, res) => {
       });
     }
 
-    const booking = await Booking.findByPk(bookingId);
+    const booking = await Booking.findByPk(bookingId, {
+      include: [{
+        model: Employee,
+        as: 'employee',
+        attributes: ['firstName', 'lastName']
+      }]
+    });
+    
     if (!booking) {
       return res.status(404).json({
         success: false,
@@ -153,10 +160,21 @@ const updateBookingStatus = async (req, res) => {
       updatedAt: new Date()
     });
 
+    // Prepare response with additional info for frontend
+    const responseData = {
+      ...booking.toJSON(),
+      workerName: booking.employee ? `${booking.employee.firstName} ${booking.employee.lastName}` : 'Unknown Worker',
+      customerNotification: status === 'accepted' ? {
+        message: `Your work request has been accepted by ${booking.employee ? `${booking.employee.firstName} ${booking.employee.lastName}` : 'the worker'}!`,
+        date: booking.preferredDate,
+        time: booking.preferredTime
+      } : null
+    };
+
     res.status(200).json({
       success: true,
       message: `Booking ${status} successfully`,
-      data: booking
+      data: responseData
     });
 
   } catch (error) {
@@ -250,7 +268,7 @@ const getBookingById = async (req, res) => {
       include: [{
         model: Employee,
         as: 'employee',
-        attributes: ['firstName', 'lastName', 'email', 'mobileNumber', 'workExperience']
+        attributes: ['firstName', 'lastName', 'mobileNumber', 'workExperience']
       }]
     });
 
@@ -294,7 +312,7 @@ const getCustomerBookings = async (req, res) => {
       include: [{
         model: Employee,
         as: 'employee',
-        attributes: ['firstName', 'lastName', 'email', 'mobileNumber', 'workExperience']
+        attributes: ['firstName', 'lastName', 'mobileNumber', 'workExperience']
       }],
       order: [['createdAt', 'DESC']]
     });

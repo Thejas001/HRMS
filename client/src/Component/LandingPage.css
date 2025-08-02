@@ -21,6 +21,266 @@ body {
   position: relative;
 }
 
+/* Header */
+.neo-header {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 50%, #f0f4ff 100%);
+  backdrop-filter: blur(20px);
+  border-bottom: 2px solid rgba(0, 212, 255, 0.15);
+  margin: 0 -20px;
+  padding: 0 20px;
+  min-height: 70px;
+  display: block;
+  box-shadow: 0 2px 15px rgba(0, 212, 255, 0.1);
+}
+
+.neo-header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.neo-logo {
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 50%, #0066ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(0, 212, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.neo-logo:hover {
+  text-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  transform: scale(1.02);
+}
+
+.neo-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  border: none;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.neo-profile-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.neo-profile-btn:hover::before {
+  left: 100%;
+}
+
+.neo-profile-btn:hover {
+  background: linear-gradient(135deg, #0099cc 0%, #0066ff 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+  color: #ffffff;
+}
+
+.neo-profile-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  transition: transform 0.3s ease;
+}
+
+.neo-profile-btn:hover .neo-profile-icon {
+  transform: scale(1.1);
+}
+
+.neo-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.neo-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 2px solid #e0e0e0;
+  color: #666666;
+  padding: 12px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.neo-logout-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.05), transparent);
+  transition: left 0.5s;
+}
+
+.neo-logout-btn:hover::before {
+  left: 100%;
+}
+
+.neo-logout-btn:hover {
+  background: #f8f9fa;
+  border-color: #d0d0d0;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  color: #333333;
+}
+
+.neo-logout-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  transition: transform 0.3s ease;
+}
+
+.neo-logout-btn:hover .neo-logout-icon {
+  transform: scale(1.1);
+}
+
+/* Our Services Section */
+.neo-our-services {
+  padding: 40px 0;
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+}
+
+.neo-services-simple-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.neo-services-simple-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: -0.025em;
+}
+
+.neo-services-simple-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.neo-service-simple-card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 12px 6px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+  border: 1px solid #f1f5f9;
+  min-width: 0;
+}
+
+.neo-service-simple-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: #e2e8f0;
+}
+
+.neo-service-simple-icon {
+  width: 35px;
+  height: 35px;
+  margin: 0 auto 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.neo-service-simple-icon svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+.neo-service-simple-card:hover .neo-service-simple-icon {
+  transform: scale(1.1);
+}
+
+.neo-service-simple-card:hover .neo-service-simple-icon svg {
+  transform: scale(1.05);
+}
+
+.neo-service-simple-icon.electrician {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+}
+
+.neo-service-simple-icon.plumber {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+}
+
+.neo-service-simple-icon.painter {
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+}
+
+.neo-service-simple-icon.carpenter {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.neo-service-simple-icon.gardener {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.neo-service-simple-icon.cleaner {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.neo-service-simple-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+  margin: 0;
+  display: block;
+  transition: color 0.3s ease;
+}
+
+.neo-service-simple-card:hover .neo-service-simple-name {
+  color: #1e293b;
+}
+
 /* Loading Animation */
 .neo-loading-container {
   display: flex;
@@ -639,6 +899,64 @@ body {
 }
 
 @media (max-width: 768px) {
+  .neo-header-content {
+    padding: 15px 0;
+  }
+
+  .neo-logo {
+    font-size: 1.6rem;
+  }
+
+  .neo-header-buttons {
+    gap: 8px;
+  }
+
+  .neo-profile-btn,
+  .neo-logout-btn {
+    padding: 10px 16px;
+    font-size: 12px;
+    border-radius: 20px;
+  }
+
+  .neo-profile-icon,
+  .neo-logout-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .neo-our-services {
+    padding: 35px 0;
+  }
+
+  .neo-services-simple-title {
+    font-size: 1.7rem;
+  }
+
+  .neo-services-simple-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 15px;
+    padding: 0 15px;
+  }
+
+  .neo-service-simple-card {
+    padding: 15px 8px;
+  }
+
+  .neo-service-simple-icon {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 8px;
+  }
+
+  .neo-service-simple-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .neo-service-simple-name {
+    font-size: 0.8rem;
+  }
+
   .neo-hero {
     padding: 60px 0 30px;
   }
@@ -700,6 +1018,64 @@ body {
 }
 
 @media (max-width: 480px) {
+  .neo-header-content {
+    padding: 12px 0;
+  }
+
+  .neo-logo {
+    font-size: 1.4rem;
+  }
+
+  .neo-header-buttons {
+    gap: 6px;
+  }
+
+  .neo-profile-btn,
+  .neo-logout-btn {
+    padding: 8px 14px;
+    font-size: 11px;
+    border-radius: 18px;
+  }
+
+  .neo-profile-icon,
+  .neo-logout-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .neo-our-services {
+    padding: 25px 0;
+  }
+
+  .neo-services-simple-title {
+    font-size: 1.5rem;
+  }
+
+  .neo-services-simple-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  .neo-service-simple-card {
+    padding: 10px 5px;
+  }
+
+  .neo-service-simple-icon {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 5px;
+  }
+
+  .neo-service-simple-icon svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .neo-service-simple-name {
+    font-size: 0.7rem;
+  }
+
   .neo-container {
     padding: 0 10px;
   }

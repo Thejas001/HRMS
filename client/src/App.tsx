@@ -4,6 +4,7 @@ import UserRegister from './Component/Customer/UserRegister';
 import LandingPage from './Component/LandingPage';
 import WorkersPage from './Component/Customer/WorkersPage';
 import BookWorker from './Component/Customer/BookWorker';
+import UserProfile from './Component/Customer/UserProfile';
 import WorkerLogin from './Component/Worker/WorkerLogin';
 import WorkerRegister from './Component/Worker/WorkerRegister';
 import WorkerDashboard from "./Component/Worker/WorkerDashboard";
@@ -22,6 +23,7 @@ function App() {
         <Route path="/register" element={<UserRegister />} />
         <Route path="/workers" element={<WorkersPage />} />
         <Route path="/book-worker" element={<BookWorker />} />
+        <Route path="/profile" element={<UserProfile />} />
         <Route path="/worker/login" element={<WorkerLogin />} />
         <Route path="/worker/register" element={<WorkerRegister />} />
         <Route path="/worker" element={<WorkerLayout />}>

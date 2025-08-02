@@ -48,6 +48,27 @@ const WorkerRegister = () => {
             return;
         }
 
+        // Additional validation
+        if (workerData.password.length < 6) {
+            alert("Password must be at least 6 characters long.");
+            return;
+        }
+
+        if (!workerData.email.includes('@')) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        if (workerData.mobileNumber.length < 10) {
+            alert("Please enter a valid mobile number.");
+            return;
+        }
+
+        if (parseInt(workerData.age) < 18 || parseInt(workerData.age) > 65) {
+            alert("Age must be between 18 and 65 years.");
+            return;
+        }
+
         setLoading(true);
         try {
             const formData = new FormData();
@@ -72,12 +93,20 @@ const WorkerRegister = () => {
                 if (token) {
                     localStorage.setItem('workerToken', token);
                 }
-                alert('Worker registered successfully!');
-                navigate('/worker-dashboard');
+                alert('Worker registered successfully! Your application is pending admin approval.');
+                navigate('/worker/dashboard');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error registering worker:', error);
-            alert('Error registering worker. Please try again.');
+            if (error.response?.status === 400) {
+                alert(error.response.data.message || 'Invalid data provided. Please check your information.');
+            } else if (error.response?.status === 409) {
+                alert('Email already exists. Please use a different email address.');
+            } else if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
+                alert('Unable to connect to server. Please ensure the backend server is running on port 5000.');
+            } else {
+                alert(error.response?.data?.message || 'Error registering worker. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -91,67 +120,67 @@ const WorkerRegister = () => {
                     {/* Names */}
                     <div className="form-group">
                         <label>First Name</label>
-                        <input type="text" name="firstName" value={workerData.firstName} onChange={handleChange} required />
+                        <input type="text" name="firstName" value={workerData.firstName} onChange={handleChange} required autoComplete="off" />
                     </div>
                     <div className="form-group">
                         <label>Middle Name</label>
-                        <input type="text" name="middleName" value={workerData.middleName} onChange={handleChange} />
+                        <input type="text" name="middleName" value={workerData.middleName} onChange={handleChange} autoComplete="off" />
                     </div>
                     <div className="form-group">
                         <label>Last Name</label>
-                        <input type="text" name="lastName" value={workerData.lastName} onChange={handleChange} required />
+                        <input type="text" name="lastName" value={workerData.lastName} onChange={handleChange} required autoComplete="off" />
                     </div>
                 </div>
 
                 <div className="form-group">
                     <label>Email</label>
-                    <input type="email" name="email" value={workerData.email} onChange={handleChange} required />
+                    <input type="email" name="email" value={workerData.email} onChange={handleChange} required autoComplete="off" />
                 </div>
 
                 <div className="form-group">
                     <label>Password</label>
-                    <input type="password" name="password" value={workerData.password} onChange={handleChange} required />
+                    <input type="password" name="password" value={workerData.password} onChange={handleChange} required autoComplete="off" />
                 </div>
 
                 {/* ✅ Confirm Password Field */}
                 <div className="form-group">
                     <label>Confirm Password</label>
-                    <input type="password" name="confirmPassword" value={workerData.confirmPassword} onChange={handleChange} required />
+                    <input type="password" name="confirmPassword" value={workerData.confirmPassword} onChange={handleChange} required autoComplete="off" />
                 </div>
 
                 <div className="form-group">
                     <label>Age</label>
-                    <input type="text" name="age" value={workerData.age} onChange={handleChange} required />
+                    <input type="text" name="age" value={workerData.age} onChange={handleChange} required autoComplete="off" />
                 </div>
 
                 <div className="form-group">
                     <label>Address</label>
-                    <textarea name="address" value={workerData.address} onChange={handleChange} required />
+                    <textarea name="address" value={workerData.address} onChange={handleChange} required autoComplete="off" />
                 </div>
 
                 <div className="form-row">
                     <div className="form-group">
                         <label>State</label>
-                        <input type="text" name="state" value={workerData.state} onChange={handleChange} required />
+                        <input type="text" name="state" value={workerData.state} onChange={handleChange} required autoComplete="off" />
                     </div>
                     <div className="form-group">
                         <label>Pin Code</label>
-                        <input type="text" name="pinCode" value={workerData.pinCode} onChange={handleChange} required />
+                        <input type="text" name="pinCode" value={workerData.pinCode} onChange={handleChange} required autoComplete="off" />
                     </div>
                     <div className="form-group">
                         <label>Nationality</label>
-                        <input type="text" name="nationality" value={workerData.nationality} onChange={handleChange} required />
+                        <input type="text" name="nationality" value={workerData.nationality} onChange={handleChange} required autoComplete="off" />
                     </div>
                 </div>
 
                 <div className="form-group">
                     <label>Mobile Number</label>
-                    <input type="text" name="mobileNumber" value={workerData.mobileNumber} onChange={handleChange} required />
+                    <input type="text" name="mobileNumber" value={workerData.mobileNumber} onChange={handleChange} required autoComplete="off" />
                 </div>
 
                 <div className="form-group">
                     <label>Work Experience</label>
-                    <input type="text" name="workExperience" value={workerData.workExperience} onChange={handleChange} required />
+                    <input type="text" name="workExperience" value={workerData.workExperience} onChange={handleChange} required autoComplete="off" />
                 </div>
 
                 <div className="form-group">

@@ -32,7 +32,7 @@ const UserRegister = () => {
 
       if (response.status === 201) {
         toast.success('Registration successful! Redirecting to login...', { autoClose: 1500 });
-        setTimeout(() => navigate('/login'), 1500);
+        setTimeout(() => navigate('/'), 1500);
       }
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Registration failed');
@@ -86,7 +86,7 @@ const UserRegister = () => {
           <button type="submit" disabled={loading}>
             {loading ? 'Registering...' : 'Register'}
           </button>
-          <p className="redirect-login" onClick={() => navigate('/dashboard')}>
+          <p className="redirect-login" onClick={() => navigate('/')}>
             Already have an account? <span>Login here</span>
           </p>
         </form>

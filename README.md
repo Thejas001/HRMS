@@ -1,172 +1,167 @@
+# HRMS - Human Resource Management System
 
-🏢  Employee Management System  🚀  
+A comprehensive HR management system with employee management, attendance tracking, leave management, and more.
 
-A  full-stack Employee Management System  built using  Node.js, MySQL, and React .  
-This system helps organizations efficiently manage employees, track attendance, handle leave requests, schedule shifts, and perform various  HR operations .  
+## 🚀 Quick Start
 
- 
+### Prerequisites
+- Node.js (v14 or higher)
+- MySQL/PostgreSQL database
+- npm or yarn
 
-   🎨  Screenshots & Flow Diagram   
+### Installation
 
-    🔹  System Flow Diagram   
-    ![image](https://github.com/user-attachments/assets/c733ec5a-8c04-4469-95ca-7ca2e1793d45)
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd HRMS
+   ```
 
- 
-    🔹  Login Screen  
-    ![image](https://github.com/user-attachments/assets/c545632a-1745-45fa-ade5-8b675ba6d72d)
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
- 
-    🔹  Admin Dashboard   
-    ![image](https://github.com/user-attachments/assets/9c2dc05f-fc1c-4470-bb4a-4a0bc375d9f2)
+3. **Configure database**
+   - Update database configuration in `config/db.js`
+   - Create your database
 
- 
- 
+4. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your database credentials
+   ```
 
-   🚀  Key Features   
+5. **Start the server**
+   ```bash
+   npm start
+   ```
 
-    🔐  Authentication & Role-Based Access   
-✔ Secure login system with  JWT authentication   
-✔ Role-based access control for  employees and admins   
+## 👑 Default Admin Access
 
-    📊  Attendance Management   
-✔ Employees can  check in/out  with timestamps  
-✔ Admins can  monitor and generate reports   
+**The system automatically creates a default admin user on first startup:**
 
-    📅  Leave Management   
-✔ Employees can  request leaves   
-✔ Admins can  approve/reject leave requests   
-✔ Leave balance tracking  
+- **Email:** `admin@admin.com`
+- **Password:** `admin123`
+- **Role:** Admin
 
-    ⏳  Shift Management   
-✔ Assign, update, and manage  employee work shifts   
-✔ Flexible scheduling  
+### 🔐 Security Notice
+⚠️ **IMPORTANT:** Change the default password immediately after first login for security!
 
-    🎯  Admin Dashboard   
-✔ Full control over  employee records, approvals, and reports   
-✔ Manage attendance, leaves, shifts, and user roles  
+### Manual Admin Creation
+If you need to create the admin user manually:
+```bash
+node createAdminUser.js
+```
 
- 
+## 📋 Features
 
-   🛠️  Tech Stack   
+### Admin Panel
+- Employee management
+- Attendance tracking
+- Leave approval
+- Payroll management
+- User management
 
-🔹  Frontend:  React.js, React Router, Axios  
-🔹  Backend:  Node.js, Express.js  
-🔹  Database:  MySQL  
-🔹  Authentication:  JWT (JSON Web Tokens)  
-🔹  State Management:  React Context API  
-🔹  API Requests:  Axios  
+### Employee Features
+- Profile management
+- Attendance marking
+- Leave application
+- Work requests
 
- 
+### Worker Portal
+- Job posting
+- Work applications
+- Profile management
 
-   📂  Project Structure   
-/employee-management
-│── backend/                  Node.js Backend
-│   ├── config/               Database & Auth Configs
-│   ├── controllers/          Business Logic (Auth, Employees, Leaves, Shifts)
-│   ├── models/               Database Models (MySQL)
-│   ├── routes/               API Routes
-│   ├── middleware/           JWT Authentication & Role-based access
-│   ├── server.js             Main Server File
-│
-│── frontend/                 React Frontend
-│   ├── src/
-│   │   ├── components/       Reusable UI Components
-│   │   ├── pages/            App Pages (Dashboard, Attendance, Leave, etc.)
-│   │   ├── context/          React Context API for State Management
-│   │   ├── services/         API Calls with Axios
-│   │   ├── App.js            Main App Component
-│   │   ├── index.js          React DOM Rendering
-│
-│── README.md                 Project Documentation
-│── package.json              Dependencies & Scripts
-│── .env                      Environment Variables
- 
+## 🛠️ API Endpoints
 
- 
+### Authentication
+- `POST /api/users/login` - User login
+- `POST /api/users/register` - User registration
 
-   ⚡  Installation & Setup   
+### Admin Routes
+- `GET /api/admin/users` - Get all users
+- `POST /api/admin/users` - Create user
+- `PUT /api/admin/users/:id` - Update user
+- `DELETE /api/admin/users/:id` - Delete user
 
-    🛠️  1️⃣ Clone the Repository   
- bash
-git clone https://github.com/Sivaroyal007/HRMS.git
-cd employee-management
- 
+### Employee Routes
+- `POST /api/employee/register` - Employee registration
+- `GET /api/employee/profile` - Get employee profile
+- `PUT /api/employee/profile` - Update profile
 
-    🛠️  2️⃣ Backend Setup (Node.js + MySQL)   
- bash
-cd backend
-npm install
- 
-- Create a `.env` file in the `backend` directory and add:  
-   ini
-  DB_HOST=your_mysql_host
-  DB_USER=your_mysql_user
-  DB_PASSWORD=your_mysql_password
-  DB_NAME=employee_management
-  JWT_SECRET=your_secret_key
-   
-- Run migrations to set up the database:
-   bash
-  node setupDatabase.js
-   
-- Start the backend server:
-   bash
-  npm start
-   
+### Attendance
+- `POST /api/attendance/mark` - Mark attendance
+- `GET /api/attendance/report` - Get attendance report
 
-    🛠️  3️⃣ Frontend Setup (React.js)   
- bash
-cd frontend
-npm install
-npm start
- 
+### Leave Management
+- `POST /api/leave/apply` - Apply for leave
+- `GET /api/leave/requests` - Get leave requests
+- `PUT /api/leave/approve/:id` - Approve/reject leave
 
- 
+## 🗄️ Database Schema
 
-   🎥  Demo   
-[![Watch Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://youtu.be/YOUR_VIDEO_ID)  
-📌 *Click the image to watch the demo video*  
+The system uses the following main models:
+- **User** - Authentication and user management
+- **Employee** - Employee details and profiles
+- **Attendance** - Attendance tracking
+- **LeaveRequest** - Leave applications
+- **WorkRequest** - Work requests
+- **JobPost** - Job postings
+- **Booking** - Service bookings
 
- 
+## 🔧 Configuration
 
-   📌  API Endpoints (Backend)   
+### Environment Variables
+```env
+DB_HOST=localhost
+DB_USER=your_username
+DB_PASSWORD=your_password
+DB_NAME=hrms_db
+DB_DIALECT=mysql
+PORT=5000
+```
 
-|  Method  |  Endpoint          |  Description                  |
-|   --|       |           |
-| `POST`    | `/api/auth/login`   | User login                     |
-| `POST`    | `/api/auth/register`| Register new employee/admin    |
-| `GET`     | `/api/employees`    | Get all employees (Admin only) |
-| `POST`    | `/api/attendance`   | Mark attendance                |
-| `GET`     | `/api/attendance`   | Get attendance records         |
-| `POST`    | `/api/leaves`       | Request leave                  |
-| `GET`     | `/api/leaves`       | Get leave requests (Admin)     |
-| `POST`    | `/api/shifts`       | Assign shifts (Admin)          |
-| `GET`     | `/api/shifts`       | Get shift schedules            |
+### Database Setup
+1. Create your database
+2. Update `config/db.js` with your credentials
+3. Run the server - tables will be created automatically
 
- 
+## 🚀 Deployment
 
-   🎯  Future Enhancements   
-✔ Payroll integration  
-✔ Notifications & email alerts  
-✔ Mobile app version  
+### Production Setup
+1. Set environment variables for production
+2. Use a production database
+3. Configure proper security settings
+4. Set up SSL certificates
+5. Use PM2 or similar process manager
 
- 
+### Docker (Optional)
+```bash
+docker build -t hrms .
+docker run -p 5000:5000 hrms
+```
 
-   🤝  Contribution   
+## 📝 Contributing
 
-🚀 Want to improve this project?  Fork the repo, create a new branch, and submit a pull request!   
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
- 
+## 📄 License
 
-   📞  Contact   
+This project is licensed under the MIT License.
 
-💼  Name:   Siva Sai Royal   
-📧  Email:  [sivaroyal423@gmail.com](mailto:sivaroyal423@gmail.com)  
-📞  Phone:  `+91 82967349`  
-🔗  LinkedIn:  [Siva Sai Royal](https://www.linkedin.com/in/sivasai-royal/)  
+## 🆘 Support
 
- 
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation
 
-💡  If you find this project useful, don’t forget to ⭐ the repository!   
+---
 
- ️⃣   NodeJS  ReactJS  MySQL  EmployeeManagement  HRTech  SoftwareDevelopment  WebApp   
+**Note:** This system automatically creates a default admin user with credentials `admin@admin.com` / `admin123`. Please change these credentials after first login for security purposes.

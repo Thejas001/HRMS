@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './WorkerRegister.css';
 
 const WorkerRegister = () => {
@@ -10,7 +12,7 @@ const WorkerRegister = () => {
     const [workerData, setWorkerData] = useState({
         email: "",
         password: "",
-        confirmPassword: "", // ✅ NEW
+        confirmPassword: "",
         firstName: "",
         middleName: "",
         lastName: "",
@@ -24,9 +26,8 @@ const WorkerRegister = () => {
     });
 
     const [workExperienceFile, setWorkExperienceFile] = useState<File | null>(null);
-        const [aadharFile, setAadharFile] = useState<File | null>(null);
-        const [panFile, setPanFile] = useState<File | null>(null);
-
+    const [aadharFile, setAadharFile] = useState<File | null>(null);
+    const [panFile, setPanFile] = useState<File | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -42,37 +43,35 @@ const WorkerRegister = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // ✅ Confirm Password Validation
+        // Validation
         if (workerData.password !== workerData.confirmPassword) {
-            alert("Passwords do not match. Please try again.");
+            toast.error("Passwords do not match. Please try again.");
             return;
         }
 
-        // Additional validation
         if (workerData.password.length < 6) {
-            alert("Password must be at least 6 characters long.");
+            toast.error("Password must be at least 6 characters long.");
             return;
         }
 
         if (!workerData.email.includes('@')) {
-            alert("Please enter a valid email address.");
+            toast.error("Please enter a valid email address.");
             return;
         }
 
         if (workerData.mobileNumber.length < 10) {
-            alert("Please enter a valid mobile number.");
+            toast.error("Please enter a valid mobile number.");
             return;
         }
 
         if (parseInt(workerData.age) < 18 || parseInt(workerData.age) > 65) {
-            alert("Age must be between 18 and 65 years.");
+            toast.error("Age must be between 18 and 65 years.");
             return;
         }
 
         setLoading(true);
         try {
             const formData = new FormData();
-            // Do not send confirmPassword to backend
             const { confirmPassword, ...dataToSend } = workerData;
             Object.entries(dataToSend).forEach(([key, value]) => {
                 formData.append(key, value);
@@ -93,19 +92,19 @@ const WorkerRegister = () => {
                 if (token) {
                     localStorage.setItem('workerToken', token);
                 }
-                alert('Worker registered successfully! Your application is pending admin approval.');
-                navigate('/worker/dashboard');
+                toast.success('Registration successful! Your application is pending admin approval.');
+                setTimeout(() => navigate('/worker/dashboard'), 2000);
             }
         } catch (error: any) {
             console.error('Error registering worker:', error);
             if (error.response?.status === 400) {
-                alert(error.response.data.message || 'Invalid data provided. Please check your information.');
+                toast.error(error.response.data.message || 'Invalid data provided. Please check your information.');
             } else if (error.response?.status === 409) {
-                alert('Email already exists. Please use a different email address.');
+                toast.error('Email already exists. Please use a different email address.');
             } else if (error.code === 'ECONNREFUSED' || error.message.includes('Network Error')) {
-                alert('Unable to connect to server. Please ensure the backend server is running on port 5000.');
+                toast.error('Unable to connect to server. Please ensure the backend server is running on port 5000.');
             } else {
-                alert(error.response?.data?.message || 'Error registering worker. Please try again.');
+                toast.error(error.response?.data?.message || 'Error registering worker. Please try again.');
             }
         } finally {
             setLoading(false);
@@ -113,94 +112,221 @@ const WorkerRegister = () => {
     };
 
     return (
-        <div className="worker-register-container">
-            <form className="worker-register-form" onSubmit={handleSubmit}>
-                <h2>Worker Registration</h2>
-                <div className="form-row">
-                    {/* Names */}
-                    <div className="form-group">
-                        <label>First Name</label>
-                        <input type="text" name="firstName" value={workerData.firstName} onChange={handleChange} required autoComplete="off" />
+        <div className="animated-register-container">
+            <ToastContainer />
+            <div className="animated-register-card">
+                <div className="animated-header">
+                    <h1>Worker Registration</h1>
+                    <p>Create your account to start working</p>
+                </div>
+
+                <form className="animated-form" onSubmit={handleSubmit}>
+                    <div className="form-section">
+                        <h3>Personal Details</h3>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="firstName">First Name *</label>
+                                <input 
+                                    type="text" 
+                                    id="firstName"
+                                    name="firstName" 
+                                    value={workerData.firstName} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="First name"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="lastName">Last Name *</label>
+                                <input 
+                                    type="text" 
+                                    id="lastName"
+                                    name="lastName" 
+                                    value={workerData.lastName} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="Last name"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="age">Age *</label>
+                                <input 
+                                    type="number" 
+                                    id="age"
+                                    name="age" 
+                                    value={workerData.age} 
+                                    onChange={handleChange} 
+                                    required 
+                                    min="18"
+                                    max="65"
+                                    placeholder="Age"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="mobileNumber">Mobile Number *</label>
+                                <input 
+                                    type="tel" 
+                                    id="mobileNumber"
+                                    name="mobileNumber" 
+                                    value={workerData.mobileNumber} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="Mobile number"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="email">Email Address *</label>
+                            <input 
+                                type="email" 
+                                id="email"
+                                name="email" 
+                                value={workerData.email} 
+                                onChange={handleChange} 
+                                required 
+                                placeholder="Email address"
+                            />
+                        </div>
                     </div>
-                    <div className="form-group">
-                        <label>Middle Name</label>
-                        <input type="text" name="middleName" value={workerData.middleName} onChange={handleChange} autoComplete="off" />
+
+                    <div className="form-section">
+                        <h3>Address</h3>
+                        <div className="form-group">
+                            <label htmlFor="address">Full Address *</label>
+                            <textarea 
+                                id="address"
+                                name="address" 
+                                value={workerData.address} 
+                                onChange={handleChange} 
+                                required 
+                                placeholder="Enter your complete address"
+                                rows={3}
+                            />
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="state">State *</label>
+                                <input 
+                                    type="text" 
+                                    id="state"
+                                    name="state" 
+                                    value={workerData.state} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="State"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="pinCode">Pin Code *</label>
+                                <input 
+                                    type="text" 
+                                    id="pinCode"
+                                    name="pinCode" 
+                                    value={workerData.pinCode} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="Pin code"
+                                />
+                            </div>
+                        </div>
                     </div>
-                    <div className="form-group">
-                        <label>Last Name</label>
-                        <input type="text" name="lastName" value={workerData.lastName} onChange={handleChange} required autoComplete="off" />
+
+                    <div className="form-section">
+                        <h3>Account Security</h3>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="password">Password *</label>
+                                <input 
+                                    type="password" 
+                                    id="password"
+                                    name="password" 
+                                    value={workerData.password} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="Password"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="confirmPassword">Confirm Password *</label>
+                                <input 
+                                    type="password" 
+                                    id="confirmPassword"
+                                    name="confirmPassword" 
+                                    value={workerData.confirmPassword} 
+                                    onChange={handleChange} 
+                                    required 
+                                    placeholder="Confirm password"
+                                />
+                            </div>
+                        </div>
                     </div>
-                </div>
 
-                <div className="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email" value={workerData.email} onChange={handleChange} required autoComplete="off" />
-                </div>
-
-                <div className="form-group">
-                    <label>Password</label>
-                    <input type="password" name="password" value={workerData.password} onChange={handleChange} required autoComplete="off" />
-                </div>
-
-                {/* ✅ Confirm Password Field */}
-                <div className="form-group">
-                    <label>Confirm Password</label>
-                    <input type="password" name="confirmPassword" value={workerData.confirmPassword} onChange={handleChange} required autoComplete="off" />
-                </div>
-
-                <div className="form-group">
-                    <label>Age</label>
-                    <input type="text" name="age" value={workerData.age} onChange={handleChange} required autoComplete="off" />
-                </div>
-
-                <div className="form-group">
-                    <label>Address</label>
-                    <textarea name="address" value={workerData.address} onChange={handleChange} required autoComplete="off" />
-                </div>
-
-                <div className="form-row">
-                    <div className="form-group">
-                        <label>State</label>
-                        <input type="text" name="state" value={workerData.state} onChange={handleChange} required autoComplete="off" />
+                    <div className="form-section">
+                        <h3>Professional Information</h3>
+                        <div className="form-group">
+                            <label htmlFor="workExperience">Work Experience *</label>
+                            <input 
+                                type="text" 
+                                id="workExperience"
+                                name="workExperience" 
+                                value={workerData.workExperience} 
+                                onChange={handleChange} 
+                                required 
+                                placeholder="Describe your work experience"
+                            />
+                        </div>
                     </div>
-                    <div className="form-group">
-                        <label>Pin Code</label>
-                        <input type="text" name="pinCode" value={workerData.pinCode} onChange={handleChange} required autoComplete="off" />
+
+                    <div className="form-section">
+                        <h3>Documents</h3>
+                        <div className="form-group">
+                            <label htmlFor="aadharFile">Aadhaar Card *</label>
+                            <input 
+                                type="file" 
+                                id="aadharFile"
+                                onChange={(e) => handleFileChange(e, setAadharFile)}
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="panFile">PAN Card *</label>
+                            <input 
+                                type="file" 
+                                id="panFile"
+                                onChange={(e) => handleFileChange(e, setPanFile)}
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="workExperienceFile">Work Experience Certificate</label>
+                            <input 
+                                type="file" 
+                                id="workExperienceFile"
+                                onChange={(e) => handleFileChange(e, setWorkExperienceFile)}
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                            />
+                        </div>
                     </div>
-                    <div className="form-group">
-                        <label>Nationality</label>
-                        <input type="text" name="nationality" value={workerData.nationality} onChange={handleChange} required autoComplete="off" />
+
+                    <div className="form-actions">
+                        <button type="submit" className="submit-btn" disabled={loading}>
+                            {loading ? 'Creating Account...' : 'Create Account'}
+                        </button>
+                        <p className="login-link">
+                            Already have an account? <span onClick={() => navigate('/worker/login')}>Login here</span>
+                        </p>
                     </div>
-                </div>
-
-                <div className="form-group">
-                    <label>Mobile Number</label>
-                    <input type="text" name="mobileNumber" value={workerData.mobileNumber} onChange={handleChange} required autoComplete="off" />
-                </div>
-
-                <div className="form-group">
-                    <label>Work Experience</label>
-                    <input type="text" name="workExperience" value={workerData.workExperience} onChange={handleChange} required autoComplete="off" />
-                </div>
-
-                <div className="form-group">
-                    <label>Upload Work Experience Certificate</label>
-                    <input type="file" onChange={(e) => handleFileChange(e, setWorkExperienceFile)} />
-                </div>
-                <div className="form-group">
-                    <label>Upload Aadhaar Card</label>
-                    <input type="file" onChange={(e) => handleFileChange(e, setAadharFile)} />
-                </div>
-
-                <div className="form-group">
-                    <label>Upload PAN Card</label>
-                    <input type="file" onChange={(e) => handleFileChange(e, setPanFile)} />
-                </div>
-
-                <button type="submit" disabled={loading}>
-                    {loading ? 'Registering...' : 'Register'}
-                </button>
-            </form>
+                </form>
+            </div>
         </div>
     );
 };

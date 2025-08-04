@@ -22,7 +22,7 @@ const createBooking = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!workerId || !customerName || !customerEmail || !workType || !preferredDate) {
+    if (!workerId || !customerName || !customerEmail || !workDescription || !preferredDate) {
       return res.status(400).json({
         success: false,
         message: 'Missing required fields'
@@ -60,12 +60,12 @@ const createBooking = async (req, res) => {
       customerName,
       customerEmail,
       customerPhone,
-      workDescription: workDescription || workType,
+      workDescription: workDescription || workType || '',
       preferredDate,
       preferredTime,
       address,
       estimatedHours: 1, // Default value
-      specialRequirements: budget || urgency || '',
+      specialRequirements: `${budget ? 'Budget: ' + budget : ''}${urgency ? ' Urgency: ' + urgency : ''}`.trim(),
       status,
       bookingDate: new Date().toISOString().split('T')[0]
     });

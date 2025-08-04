@@ -62,6 +62,7 @@ const Employee = sequelize.define("Employee", {
     profilePic: { type: DataTypes.STRING, allowNull: true },
     nationality: { type: DataTypes.STRING, allowNull: false },
     workExperience: { type: DataTypes.STRING, allowNull: false },
+    workType: { type: DataTypes.STRING, allowNull: true }, // Electrician, Plumber, Painter, etc.
     idCard: { type: DataTypes.STRING, allowNull: true },
 }, { timestamps: true });
 

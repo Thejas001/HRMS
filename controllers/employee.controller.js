@@ -11,7 +11,7 @@ exports.addEmployee = async (req, res) => {
       firstName, middleName, lastName,
       age, address, state, pinCode,
       mobileNumber, nationality, workExperience,
-      email, password
+      workType, email, password
     } = req.body;
     console.log("Received body:", req.body);
     console.log("Uploaded files:", req.files);
@@ -38,6 +38,7 @@ exports.addEmployee = async (req, res) => {
       mobileNumber,
       nationality,
       workExperience,
+      workType, // Add workType to employee creation
       applicationStatus: 'pending',
       // Store file paths if files were uploaded
       certificate: req.files?.certificate ? req.files.certificate[0].path : null,
@@ -417,6 +418,7 @@ exports.getPublicWorkers = async (req, res) => {
         "mobileNumber", 
         "nationality",
         "workExperience",
+        "workType",
         "applicationStatus", 
         "profilePic",
         "createdAt",
@@ -447,6 +449,7 @@ exports.getPublicWorkers = async (req, res) => {
       mobileNumber: employee.mobileNumber,
       nationality: employee.nationality,
       workExperience: employee.workExperience,
+      workType: employee.workType,
       applicationStatus: employee.applicationStatus,
       profilePic: employee.profilePic,
       createdAt: employee.createdAt,

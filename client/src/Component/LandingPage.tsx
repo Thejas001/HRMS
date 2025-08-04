@@ -14,12 +14,26 @@ interface Worker {
   mobileNumber: string;
   nationality: string;
   workExperience: string;
+  workType?: string;
   applicationStatus: 'pending' | 'accepted' | 'rejected';
   profilePic?: string;
   createdAt: string;
 }
 
-
+interface CustomerBooking {
+  id: number;
+  workerName: string;
+  workDescription: string;
+  preferredDate: string;
+  preferredTime: string;
+  status: string;
+  createdAt: string;
+  employee?: {
+    firstName: string;
+    lastName: string;
+    workExperience: string;
+  };
+}
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -28,10 +42,31 @@ const LandingPage = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [workTypeFilter, setWorkTypeFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
+  const [customerBookings, setCustomerBookings] = useState<CustomerBooking[]>([]);
+  const [pendingBookingsCount, setPendingBookingsCount] = useState(0);
+
+  // Available work types
+  const workTypes = [
+    'Electrician',
+    'Plumber',
+    'Painter',
+    'Carpenter',
+    'Gardener',
+    'Cleaner',
+    'Mason',
+    'Welder',
+    'Mechanic',
+    'Driver',
+    'Cook',
+    'Security Guard',
+    'Other'
+  ];
 
   useEffect(() => {
     fetchWorkers();
+    fetchCustomerBookings();
   }, []);
 
   const fetchWorkers = async () => {
@@ -54,6 +89,7 @@ const LandingPage = () => {
           mobileNumber: worker.mobileNumber || '',
           nationality: worker.nationality || '',
           workExperience: worker.workExperience || '',
+          workType: worker.workType || '',
           applicationStatus: worker.applicationStatus || 'accepted',
           profilePic: worker.profilePic || '',
           createdAt: worker.createdAt || new Date().toISOString()
@@ -73,6 +109,26 @@ const LandingPage = () => {
     }
   };
 
+  const fetchCustomerBookings = async () => {
+    try {
+      const userEmail = localStorage.getItem('userEmail') || sessionStorage.getItem('userEmail');
+      if (userEmail) {
+        const response = await axios.get(`http://localhost:5000/api/bookings/customer/${encodeURIComponent(userEmail)}`);
+        
+        if (response.data.success) {
+          const bookings = response.data.data;
+          setCustomerBookings(bookings);
+          
+          // Count pending bookings
+          const pendingCount = bookings.filter((booking: CustomerBooking) => booking.status === 'pending').length;
+          setPendingBookingsCount(pendingCount);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching customer bookings:', error);
+    }
+  };
+
   useEffect(() => {
     let filtered = workers;
 
@@ -84,11 +140,13 @@ const LandingPage = () => {
         const state = worker.state.toLowerCase();
         const experience = worker.workExperience.toLowerCase();
         const nationality = worker.nationality.toLowerCase();
+        const workType = (worker.workType || '').toLowerCase();
         
         return fullName.includes(searchLower) ||
                state.includes(searchLower) ||
                experience.includes(searchLower) ||
                nationality.includes(searchLower) ||
+               workType.includes(searchLower) ||
                worker.mobileNumber.includes(searchTerm);
       });
     }
@@ -96,6 +154,11 @@ const LandingPage = () => {
     // Filter by status
     if (statusFilter !== 'all') {
       filtered = filtered.filter(worker => worker.applicationStatus === statusFilter);
+    }
+
+    // Filter by work type
+    if (workTypeFilter !== 'all') {
+      filtered = filtered.filter(worker => worker.workType === workTypeFilter);
     }
 
     // Sort workers
@@ -115,7 +178,7 @@ const LandingPage = () => {
     });
 
     setFilteredWorkers(filtered);
-  }, [workers, searchTerm, statusFilter, sortBy]);
+  }, [workers, searchTerm, statusFilter, workTypeFilter, sortBy]);
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -159,6 +222,7 @@ const LandingPage = () => {
           mobileNumber: worker.mobileNumber,
           nationality: worker.nationality,
           workExperience: worker.workExperience,
+          workType: worker.workType,
           profilePic: worker.profilePic
         }
       }
@@ -201,6 +265,9 @@ const LandingPage = () => {
                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
               </svg>
               My Profile
+              {pendingBookingsCount > 0 && (
+                <span className="neo-badge">{pendingBookingsCount}</span>
+              )}
             </button>
             <button 
               onClick={handleLogout}
@@ -294,7 +361,7 @@ const LandingPage = () => {
             </svg>
             <input
               type="text"
-              placeholder="Search by name, location, skills, or phone..."
+              placeholder="Search by name, location, work type, skills, or phone..."
               value={searchTerm}
               onChange={handleSearchChange}
               className="neo-search-input"
@@ -322,6 +389,17 @@ const LandingPage = () => {
               <option value="accepted">Available</option>
             </select>
             
+            <select
+              value={workTypeFilter}
+              onChange={(e) => setWorkTypeFilter(e.target.value)}
+              className="neo-select"
+            >
+              <option value="all">All Work Types</option>
+              {workTypes.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -380,11 +458,24 @@ const LandingPage = () => {
                 </div>
                 <div className="neo-card-title">
                   <h3>{getFullName(worker)}</h3>
-                  {getStatusBadge(worker.applicationStatus)}
+                  <div className="neo-card-badges">
+                    {getStatusBadge(worker.applicationStatus)}
+                    {worker.workType && (
+                      <span className="neo-work-type-badge">
+                        {worker.workType}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
               
               <div className="neo-card-body">
+                {worker.workType && (
+                  <div className="neo-info-row">
+                    <span className="neo-info-label">Work Type:</span>
+                    <span className="neo-info-value">{worker.workType}</span>
+                  </div>
+                )}
                 <div className="neo-info-row">
                   <span className="neo-info-label">Age:</span>
                   <span className="neo-info-value">{worker.age} years</span>

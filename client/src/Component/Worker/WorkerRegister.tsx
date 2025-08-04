@@ -23,6 +23,7 @@ const WorkerRegister = () => {
         mobileNumber: "",
         nationality: "",
         workExperience: "",
+        workType: "",
     });
 
     const [workExperienceFile, setWorkExperienceFile] = useState<File | null>(null);
@@ -268,6 +269,31 @@ const WorkerRegister = () => {
 
                     <div className="form-section">
                         <h3>Professional Information</h3>
+                        <div className="form-group">
+                            <label htmlFor="workType">Work Type *</label>
+                            <select 
+                                id="workType"
+                                name="workType" 
+                                value={workerData.workType} 
+                                onChange={handleChange} 
+                                required 
+                            >
+                                <option value="">Select your work type</option>
+                                <option value="Electrician">Electrician</option>
+                                <option value="Plumber">Plumber</option>
+                                <option value="Painter">Painter</option>
+                                <option value="Carpenter">Carpenter</option>
+                                <option value="Gardener">Gardener</option>
+                                <option value="Cleaner">Cleaner</option>
+                                <option value="Mason">Mason</option>
+                                <option value="Welder">Welder</option>
+                                <option value="Mechanic">Mechanic</option>
+                                <option value="Driver">Driver</option>
+                                <option value="Cook">Cook</option>
+                                <option value="Security Guard">Security Guard</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
                         <div className="form-group">
                             <label htmlFor="workExperience">Work Experience *</label>
                             <input 
